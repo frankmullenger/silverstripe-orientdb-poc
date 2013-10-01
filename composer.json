@@ -7,8 +7,11 @@
 	}],
 	"require": {
 		"php": ">=5.3.2",
-		"silverstripe/framework": "dev-orientdb-poc",
+		"silverstripe/framework": "dev-orientdb-poc as 3.1.x-dev",
 		"orientdb-php/orientdb-php": "dev-master"
+	},
+	"require-dev": {
+		"silverstripe/docsviewer": "dev-master"
 	},
 	"config": {
 			"process-timeout": 1200

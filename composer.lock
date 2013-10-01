@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "5f56e52325c00979b648077f1c01b260",
+    "hash": "cebc11acd45a21e2f5d6c6eb0574368f",
     "packages": [
         {
             "name": "composer/installers",
@@ -120,12 +120,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/frankmullenger/silverstripe-framework.git",
-                "reference": "c78418d086613cb85e4eed1efdd4ef7e849a35d6"
+                "reference": "e7e4be6221870faaba75fdf23f1e59c64e132bfe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/frankmullenger/silverstripe-framework/zipball/c78418d086613cb85e4eed1efdd4ef7e849a35d6",
-                "reference": "c78418d086613cb85e4eed1efdd4ef7e849a35d6",
+                "url": "https://api.github.com/repos/frankmullenger/silverstripe-framework/zipball/e7e4be6221870faaba75fdf23f1e59c64e132bfe",
+                "reference": "e7e4be6221870faaba75fdf23f1e59c64e132bfe",
                 "shasum": ""
             },
             "require": {
@@ -160,19 +160,60 @@
             "support": {
                 "source": "https://github.com/frankmullenger/silverstripe-framework/tree/orientdb-poc"
             },
-            "time": "2013-09-30 03:20:03"
+            "time": "2013-10-01 01:40:15"
         }
     ],
     "packages-dev": [
-
+        {
+            "name": "silverstripe/docsviewer",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/silverstripe/silverstripe-docsviewer.git",
+                "reference": "49f56888f233a0cdb0b6b16e5b936af43bf5c002"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/silverstripe/silverstripe-docsviewer/zipball/49f56888f233a0cdb0b6b16e5b936af43bf5c002",
+                "reference": "49f56888f233a0cdb0b6b16e5b936af43bf5c002",
+                "shasum": ""
+            },
+            "require": {
+                "silverstripe/framework": "~3.1"
+            },
+            "type": "silverstripe-module",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Will Rossiter",
+                    "email": "will@fullscreen.io",
+                    "homepage": "http://wilr.github.com"
+                }
+            ],
+            "description": "Documentation viewer module for SilverStripe",
+            "keywords": [
+                "documentation",
+                "silverstripe"
+            ],
+            "time": "2013-09-21 21:32:44"
+        }
     ],
     "aliases": [
-
+        {
+            "alias": "3.1.x-dev",
+            "alias_normalized": "3.1.9999999.9999999-dev",
+            "version": "dev-orientdb-poc",
+            "package": "silverstripe/framework"
+        }
     ],
     "minimum-stability": "dev",
     "stability-flags": {
         "silverstripe/framework": 20,
-        "orientdb-php/orientdb-php": 20
+        "orientdb-php/orientdb-php": 20,
+        "silverstripe/docsviewer": 20
     },
     "platform": {
         "php": ">=5.3.2"
