@@ -19,19 +19,26 @@ This proof of concept is to investigate the feasibility of using OrientDB graph 
 
 ## Usage
 
-* Start OrientDB
-	```bash
-	cd ~/path/to/orientdb-graphed-1.5.0/bin
-	./server.sh
-	```
-* Create OrientDB database
-	```bash
-	cd ~/path/to/orientdb-graphed-1.5.0/bin
-	./console.sh
-	create database remote:localhost/dbname root <rootpassword> plocal document
-	```
-* Update ```$databaseConfigOrient``` in _config.php
-* Browse to yourdomain.com/orient
-* Build and populate database with test objects using links provided
-* Create/Read/Update/Delete test objects using interface
+Start OrientDB
+
+```bash
+cd ~/path/to/orientdb-graphed-1.5.0/bin
+./server.sh
+```
+
+Create OrientDB database
+
+```bash
+cd ~/path/to/orientdb-graphed-1.5.0/bin
+./console.sh
+create database remote:localhost/dbname root <rootpassword> plocal document
+```
+
+Update ```$databaseConfigOrient``` in _config.php
+
+Browse to yourdomain.com/orient
+
+Build and populate database with test objects using links provided
+
+Create/Read/Update/Delete test objects using interface
 
