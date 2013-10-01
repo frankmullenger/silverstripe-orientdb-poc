@@ -1,0 +1,9 @@
+---
+Name: appcustomroutes
+After:
+  - '#app'
+---
+Director:
+  rules:
+    '' : 'HomeController'
+    'orient' : 'OrientController'

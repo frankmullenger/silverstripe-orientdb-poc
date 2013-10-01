@@ -1,0 +1,12 @@
+{
+	"name": "silverstripe/orientdb",
+	"description": "Adds OrientDB support to SilverStripe",
+	"type": "silverstripe-module",
+	"keywords": ["silverstripe", "orientdb", "database"],
+	"require": {
+		"php": ">=5.3.2",
+		"silverstripe/framework": "3.*",
+		"orientdb-php/orientdb-php": "dev-master"
+	},
+	"minimum-stability": "dev"
+}

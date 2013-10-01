@@ -1,0 +1,23 @@
+{
+	"name": "frankmullenger/silverstripe-orientdb-poc",
+	"description": "A PoC for OrientDB and SilverStripe integration",
+	"authors": [{
+		"name": "Frank Mullenger",
+		"email": "frank@silverstripe.com"
+	}],
+	"require": {
+		"php": ">=5.3.2",
+		"silverstripe/framework": "dev-orientdb-poc",
+		"orientdb-php/orientdb-php": "dev-master"
+	},
+	"config": {
+			"process-timeout": 1200
+	},
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "https://github.com/frankmullenger/silverstripe-framework"
+		}
+	],
+	"minimum-stability": "dev"
+}

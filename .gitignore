@@ -1,0 +1,8 @@
+.DS_Store
+.settings
+bin
+.metadata
+/assets
+/framework
+/vendor
+/sqlite3

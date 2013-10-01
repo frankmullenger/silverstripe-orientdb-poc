@@ -1,0 +1,8 @@
+---
+Name: app
+After: "*"
+Before:
+  - '#appcustomroutes'
+---
+Email:
+  admin_email: frank@silverstripe.com
