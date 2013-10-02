@@ -7,3 +7,4 @@ Director:
   rules:
     '' : 'HomeController'
     'orient' : 'OrientController'
+    'sandbox' : 'SandboxController'

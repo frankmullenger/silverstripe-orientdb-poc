@@ -68,6 +68,8 @@ class OrientDatabase extends SS_Database {
 
 		$server = $parameters['server'];
 		$port = $parameters['port'];
+		$serverUsername = $parameters['serverusername'];
+		$serverPassword = $parameters['serverpassword'];
 		$username = $parameters['username'];
 		$password = $parameters['password'];
 		$dbName = $parameters['database'];
@@ -80,10 +82,9 @@ class OrientDatabase extends SS_Database {
 			return false;
 		}
 
-		//Connect to server
+		//Connect to server - requires different user/pass to the DB itself
 		try {
-			//TODO remove root password obvously
-			$this->dbConn = $this->db->connect('root', 'A5D6164BA656854B1879AFE47E54E0B065866ED71A7FFA5C861552573C7D9814');
+			$this->dbConn = $this->db->connect($serverUsername, $serverPassword);
 		}
 		catch (OrientDBException $e) {
 			$this->databaseError('Failed to connect to Orient database: ' . $e->getMessage());
@@ -336,7 +337,10 @@ class OrientDatabase extends SS_Database {
 	 * @param string $table The table name.
 	 * @return array
 	 */
-	protected function fieldList($table) {
+	public function fieldList($table) {
+
+		SS_Log::log(new Exception(print_r($table, true)), SS_Log::NOTICE);
+
 		SS_Log::log(new Exception(print_r(__method__, true)), SS_Log::NOTICE);
 		exit(__method__);
 	}
@@ -580,6 +584,10 @@ class OrientDatabase extends SS_Database {
 	 * @param array $options
 	 */
 	public function requireTable($table, $fieldSchema = null, $indexSchema = null, $hasAutoIncPK=true, $options = Array(), $extensions=false) {
+
+		//@todo create tables extending other tables for inheritance issues
+		SS_Log::log(new Exception(print_r($table, true)), SS_Log::NOTICE);
+		SS_Log::log(new Exception(print_r($this->tableList, true)), SS_Log::NOTICE);
 		
 		if(!isset($this->tableList[strtolower($table)])) {
 			$this->transCreateTable($table, $options, $extensions);
@@ -652,10 +660,6 @@ class OrientDatabase extends SS_Database {
 	 * 	need to take care of database abstraction in your DBField subclass.  
 	 */
 	public function requireField($table, $field, $spec) {
-
-		// SS_Log::log(new Exception(print_r($table, true)), SS_Log::NOTICE);
-		// SS_Log::log(new Exception(print_r($field, true)), SS_Log::NOTICE);
-		// SS_Log::log(new Exception(print_r($spec, true)), SS_Log::NOTICE);
 
 		//@todo this is starting to get extremely fragmented.
 		//There are two different versions of $spec floating around, and their content changes depending
