@@ -84,7 +84,7 @@ if (Director::isDev() && defined('SS_DEV_EMAIL')) {
 	//Error reporting
 	ini_set('display_errors', 1);
 	ini_set("log_errors", 1);
-	error_reporting(E_ALL);
+	error_reporting(E_ALL ^ E_NOTICE);
 	
 	//Logging
 	SS_Log::add_writer(new SS_LogFileWriter(ASSETS_PATH . '/notices.log'));

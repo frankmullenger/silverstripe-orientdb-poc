@@ -339,10 +339,16 @@ class OrientDatabase extends SS_Database {
 	 */
 	public function fieldList($table) {
 
-		SS_Log::log(new Exception(print_r($table, true)), SS_Log::NOTICE);
+		$properties = array();
+		$schema = OrientSchema::get()
+			->filter(array('Class' => $table))
+			->first();
 
-		SS_Log::log(new Exception(print_r(__method__, true)), SS_Log::NOTICE);
-		exit(__method__);
+		if ($schema && $schema->exists()) {
+			$properties = json_decode(stripslashes($schema->Properties), true);
+		}
+
+		return $properties;
 	}
 
 
@@ -586,8 +592,6 @@ class OrientDatabase extends SS_Database {
 	public function requireTable($table, $fieldSchema = null, $indexSchema = null, $hasAutoIncPK=true, $options = Array(), $extensions=false) {
 
 		//@todo create tables extending other tables for inheritance issues
-		SS_Log::log(new Exception(print_r($table, true)), SS_Log::NOTICE);
-		SS_Log::log(new Exception(print_r($this->tableList, true)), SS_Log::NOTICE);
 		
 		if(!isset($this->tableList[strtolower($table)])) {
 			$this->transCreateTable($table, $options, $extensions);
@@ -619,6 +623,9 @@ class OrientDatabase extends SS_Database {
 
 		//DB ABSTRACTION: we need to convert this to a db-specific version:
 		$this->requireField($table, 'ID', DB::getConn()->IdColumn(false, $hasAutoIncPK));
+
+		//Update the database schema, which is all kept in a single table for convenience
+		$this->writeSchema($table, $fieldSchema);
 
 		// Create custom fields
 		if ($fieldSchema) {
@@ -756,6 +763,29 @@ class OrientDatabase extends SS_Database {
 				"changed"
 			);
 		}
+	}
+
+	/**
+	 * Writes the schema to a "table" in OrientDB, this is useful for determining which classes and 
+	 * properties exist in the database as queries such as "list classes" and "desc <class>" are not 
+	 * currently supported by the PHP connector.
+	 * 
+	 * @param  string $table  Name of table/class
+	 * @param  array $schema  List of properties => property types
+	 * @return string         ID of the record
+	 */
+	private function writeSchema($table, $schema) {
+		$schematic = OrientSchema::get()
+			->filter(array('Class' => $table))
+			->first();
+
+		if (!$schematic || !$schematic->exists()) {
+			$schematic = OrientSchema::create();
+		}
+
+		$schematic->Class = $table;
+		$schematic->Properties = addslashes(json_encode($schema));
+		return $schematic->write();
 	}
 
 	public function getDbSqlDefinition($tableName, $indexName, $indexSpec){

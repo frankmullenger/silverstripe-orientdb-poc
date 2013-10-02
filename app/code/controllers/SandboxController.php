@@ -77,7 +77,18 @@ class SandboxController extends AppController {
 
 		
 		//Get properties of a table
+		try {
 
+			SS_Log::log(new Exception(print_r($clusters, true)), SS_Log::NOTICE);
+			
+			$results = $db->command(OrientDB::COMMAND_QUERY, 'desc TestObject');
+
+			SS_Log::log(new Exception(print_r($results, true)), SS_Log::NOTICE);
+
+		}
+		catch (OrientDBException $e) {
+			SS_Log::log(new Exception(print_r($e->getMessage(), true)), SS_Log::NOTICE);
+		}
 
 		return $this->customise(new ArrayData(array(
 			'Title' => 'Orient DB Sandbox',
