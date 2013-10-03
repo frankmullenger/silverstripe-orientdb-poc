@@ -351,7 +351,6 @@ class OrientDatabase extends SS_Database {
 		return $properties;
 	}
 
-
 	/**
 	 * Returns a list of all the tables in the database.
 	 * Can only retrieve this from the clusters returned by DBOpen()
@@ -360,9 +359,10 @@ class OrientDatabase extends SS_Database {
 	 * @return array
 	 */
 	public function tableList() {
+
+		//@todo this could use the OrientSchema table instead but would require extra DB call
 		return $this->tableList;
 	}
-
 	
 	/**
 	 * Returns true if the given table exists in the database
@@ -377,6 +377,8 @@ class OrientDatabase extends SS_Database {
 	 * Returns the enum values available on the given field
 	 */
 	public function enumValuesForField($tableName, $fieldName) {
+		return;
+
 		SS_Log::log(new Exception(print_r(__method__, true)), SS_Log::NOTICE);
 		exit(__method__);
 	}
@@ -775,17 +777,24 @@ class OrientDatabase extends SS_Database {
 	 * @return string         ID of the record
 	 */
 	private function writeSchema($table, $schema) {
-		$schematic = OrientSchema::get()
-			->filter(array('Class' => $table))
-			->first();
 
-		if (!$schematic || !$schematic->exists()) {
-			$schematic = OrientSchema::create();
+		//@todo this needs to be safe for using on the first DB build
+		try {
+			$schematic = OrientSchema::get()
+				->filter(array('Class' => $table))
+				->first();
+
+			if (!$schematic || !$schematic->exists()) {
+				$schematic = OrientSchema::create();
+			}
+
+			$schematic->Class = $table;
+			$schematic->Properties = addslashes(json_encode($schema));
+			return $schematic->write();
 		}
-
-		$schematic->Class = $table;
-		$schematic->Properties = addslashes(json_encode($schema));
-		return $schematic->write();
+		catch (Exception $e) {
+			return true;
+		}
 	}
 
 	public function getDbSqlDefinition($tableName, $indexName, $indexSpec){

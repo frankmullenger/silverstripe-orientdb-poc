@@ -183,7 +183,7 @@ class OrientController extends AppController {
 		
 		$content = 'Creating some test objects.. <br /><br />';
 
-		for ($i = 0; $i < 50; $i++) {
+		for ($i = 0; $i < 10; $i++) {
 			$rand = rand(1, 10);
 			$testObj = new TestObject();
 			$testObj->Code = 'orient-test-' . $rand;

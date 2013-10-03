@@ -1,7 +1,7 @@
 <?php
 
 global $project;
-$project = 'orientdb-app';
+$project = 'app';
 
 require_once("conf/ConfigureFromEnv.php");
 

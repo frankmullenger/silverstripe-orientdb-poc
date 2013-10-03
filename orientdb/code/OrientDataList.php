@@ -74,8 +74,7 @@ class OrientDataList extends DataList {
 	 */
 	public function byIDs(array $ids) {
 		$ids = array_map('intval', $ids); // sanitize
-		$baseClass = ClassInfo::baseDataClass($this->dataClass);
-		return $this->where("$baseClass.ID IN [" . implode(',', $ids) ."]");
+		return $this->where("ID IN [" . implode(',', $ids) ."]");
 	}
 
 	/**
@@ -85,7 +84,6 @@ class OrientDataList extends DataList {
 	 * @return DataObject
 	 */
 	public function byID($id) {
-		$baseClass = ClassInfo::baseDataClass($this->dataClass);
-		return $this->where("$baseClass.ID = " . (int)$id)->First();
+		return $this->filter(array('ID' => $id))->first();
 	}
 }
