@@ -23,6 +23,7 @@ switch ($_SERVER['HTTP_HOST']) {
 	//TODO: Use OrientDB databse
 	case 'orient.orientdb-app.local':
 		Object::useCustomClass('DataList', 'OrientDataList');
+		Object::useCustomClass('ForeignKey', 'OrientForeignKey');
 		global $databaseConfig;
 		$databaseConfig = array(
 			'type' => 'OrientDatabase',

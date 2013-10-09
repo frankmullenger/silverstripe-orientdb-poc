@@ -154,7 +154,6 @@ class OrientDatabase extends SS_Database {
 		if(isset($_REQUEST['showqueries'])) {
 			$endtime = round(microtime(true) - $starttime,4);
 			Debug::message("\n$sql\n{$endtime}ms\n", false);
-			// SS_Log::log(new Exception(print_r("\n$sql\n{$endtime}ms\n", true)), SS_Log::NOTICE);
 		}
 
 		DB::$lastQuery = $handle;
@@ -594,8 +593,8 @@ class OrientDatabase extends SS_Database {
 	public function requireTable($table, $fieldSchema = null, $indexSchema = null, $hasAutoIncPK=true, $options = Array(), $extensions=false) {
 
 		//@todo create tables extending other tables for inheritance issues
-		
-		if(!isset($this->tableList[strtolower($table)])) {
+
+		if (!isset($this->tableList[strtolower($table)])) {
 			$this->transCreateTable($table, $options, $extensions);
 			$this->alterationMessage("Table $table: created","created");
 		} 
@@ -656,6 +655,68 @@ class OrientDatabase extends SS_Database {
 			foreach($indexSchema as $indexName => $indexDetails) {
 				$this->requireIndex($table, $indexName, $indexDetails);
 			}
+		}
+	}
+
+	/**
+	 * Generate the given index in the database, modifying whatever already exists as necessary.
+	 * 
+	 * The keys of the array are the names of the index.
+	 * The values of the array can be one of:
+	 *  - true: Create a single column index on the field named the same as the index.
+	 *  - array('type' => 'index|unique|fulltext', 'value' => 'FieldA, FieldB'): This gives you full
+	 *    control over the index.
+	 * 
+	 * @param string $table The table name.
+	 * @param string $index The index name.
+	 * @param string|boolean $spec The specification of the index. See requireTable() for more information.
+	 */
+	public function requireIndex($table, $index, $spec) {
+
+		$newTable = false;
+		
+		//DB Abstraction: remove this ===true option as a possibility?
+		if($spec === true) {
+			$spec = "(\"$index\")";
+		}
+		
+		//Indexes specified as arrays cannot be checked with this line: (it flattens out the array)
+		if(!is_array($spec)) {
+			$spec = preg_replace('/\s*,\s*/', ',', $spec);
+		}
+
+		if(!isset($this->tableList[strtolower($table)])) $newTable = true;
+
+		if(!$newTable && !isset($this->indexList[$table])) {
+			$this->indexList[$table] = $this->indexList($table);
+		}
+						
+		//Fix up the index for database purposes
+		$index = DB::getConn()->getDbSqlDefinition($table, $index, null, true);
+		
+		//Fix the key for database purposes
+		$index_alt = DB::getConn()->modifyIndex($index, $spec);
+	
+		if(!$newTable) {
+			if(isset($this->indexList[$table][$index_alt])) {
+				if(is_array($this->indexList[$table][$index_alt])) {
+					$array_spec = $this->indexList[$table][$index_alt]['spec'];
+				} else {
+					$array_spec = $this->indexList[$table][$index_alt];
+				}
+			}
+		}
+
+		if ($newTable || !isset($this->indexList[$table][$index_alt])) {
+
+			$this->transCreateIndex($table, $index, $spec);
+			$this->alterationMessage("Index $table.$index: created as " . DB::getConn()->convertIndexSpec($spec), "created");
+		} 
+		else if ($array_spec != DB::getConn()->convertIndexSpec($spec)) {
+
+			$this->transAlterIndex($table, $index, $spec);
+			$spec_msg=DB::getConn()->convertIndexSpec($spec);
+			$this->alterationMessage("Index $table.$index: changed to $spec_msg" . " <i style=\"color: #AAA\">(from {$array_spec})</i>","changed");			
 		}
 	}
 
