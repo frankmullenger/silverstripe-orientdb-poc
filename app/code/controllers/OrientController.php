@@ -27,6 +27,7 @@ class OrientController extends AppController {
 		global $databaseConfigOrient;
 		DB::connect($databaseConfigOrient);
 		Object::useCustomClass('DataList', 'OrientDataList');
+		Object::useCustomClass('ForeignKey', 'OrientForeignKey');
 	}
 	
 	public function index() {

@@ -59,6 +59,8 @@ class OrientForeignKey extends StringField {
  	 * @see DBField::requireField()
  	 */
 	public function requireField() {
+
+		//@todo change this to use Link rather than basic varchar
 		$parts = array(
 			'datatype' => 'varchar',
 			'precision' => 50, //@todo what sort of precision do we need for RIDs?

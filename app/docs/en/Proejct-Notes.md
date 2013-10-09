@@ -58,6 +58,11 @@ When creating OrientDB database can specify "document" or "graph". Graph databas
 #### IDs are strings (non numeric)
 Several areas in core anticipate a numeric ID, currently the ID field is used to store a copy of the RID for the record which is in the format: x:y where x and y are numeric - x representing the cluster number and y representing the record number in that cluster. 
 
+#### DataList overriding
+It is not sufficient to use Object::use\_custom\_class('DataList', 'OrientDataList') as there are subclasses of DataList. Using custom classes for all subclasses is cumbersome, costly on memory and projects may subclass DataList independently. DataList requires dependency injection for the data query and filter context at minimum, there is also custom SQL queries in DataList that need to be overriden (mostly to remove "s which may be able to be hacked into OrientDataQuery). Could possibly use different namespaces before instantiating these classes?
+
+
+
 
 
 

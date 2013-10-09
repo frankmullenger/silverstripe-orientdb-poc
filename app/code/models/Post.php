@@ -9,4 +9,9 @@ class Post extends DataObject {
 	private static $has_one = array(
 		'Author' => 'Person'
 	);
+
+	private static $summary_fields = array(
+		'Title',
+		'Author.Name'
+	);
 }

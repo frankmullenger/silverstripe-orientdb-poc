@@ -12,7 +12,8 @@ class SandboxController extends AppController {
 		'index',
 		'build',
 		'populate',
-		'scratch'
+		'scratch',
+		'relations'
 	);
 
 	public function init() {
@@ -22,6 +23,7 @@ class SandboxController extends AppController {
 		global $databaseConfigOrient;
 		DB::connect($databaseConfigOrient);
 		Object::useCustomClass('DataList', 'OrientDataList');
+		Object::useCustomClass('ForeignKey', 'OrientForeignKey');
 	}
 	
 	public function index() {
@@ -95,6 +97,37 @@ class SandboxController extends AppController {
 			'SubTitle' => '',
 			'Content' => $log,
 			'Form' => ''
+		)))->renderWith(array(
+			'SandboxController',
+			'AppController'
+		));
+	}
+
+	public function relations() {
+
+		//Create a post and relate it to an author
+		$i = rand(1,999);
+
+		// $author = new Person();
+		// $author->Name = "Person $i";
+		// $id = $author->write();
+
+		// $post = new Post();
+		// $post->Title = "Post Title $i";
+		// $post->AuthorID = $id;
+		// $post->write();
+
+		$post = Post::get()->first();
+		SS_Log::log(new Exception(print_r($post->toMap(), true)), SS_Log::NOTICE);
+
+		$author = $post->Author();
+		SS_Log::log(new Exception(print_r($author->toMap(), true)), SS_Log::NOTICE);
+
+		$posts = $author->Posts();
+		SS_Log::log(new Exception(print_r($posts->map()->toArray(), true)), SS_Log::NOTICE);
+
+		return $this->customise(new ArrayData(array(
+			'Title' => 'Orient DB Sandbox'
 		)))->renderWith(array(
 			'SandboxController',
 			'AppController'

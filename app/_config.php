@@ -20,9 +20,12 @@ switch ($_SERVER['HTTP_HOST']) {
 		);
 		break;
 
-	//TODO: Use OrientDB databse
+	//Use OrientDB databse
 	case 'orient.orientdb-app.local':
+		//This is pretty yuck, possibly need dependency injection or namespace solution
 		Object::useCustomClass('DataList', 'OrientDataList');
+		Object::useCustomClass('RelationList', 'OrientRelationList');
+		Object::useCustomClass('HasManyList', 'OrientHasManyList');
 		Object::useCustomClass('ForeignKey', 'OrientForeignKey');
 		global $databaseConfig;
 		$databaseConfig = array(
