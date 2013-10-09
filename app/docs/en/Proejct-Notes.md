@@ -61,7 +61,8 @@ Several areas in core anticipate a numeric ID, currently the ID field is used to
 #### DataList overriding
 It is not sufficient to use Object::use\_custom\_class('DataList', 'OrientDataList') as there are subclasses of DataList. Using custom classes for all subclasses is cumbersome, costly on memory and projects may subclass DataList independently. DataList requires dependency injection for the data query and filter context at minimum, there is also custom SQL queries in DataList that need to be overriden (mostly to remove "s which may be able to be hacked into OrientDataQuery). Could possibly use different namespaces before instantiating these classes?
 
-
+#### Search filters
+Numerous search filters need to be overridden, currently only ExactMatchFilter has been completed.
 
 
 

@@ -48,17 +48,22 @@ class OrientDataList extends DataList {
 
 		//Unfortunately need to use subclasses for the Filters as there are assumptions in the filters about the 
 		//SQL being generated such as using "OR" and double quotes around fieldnames
-		//As Hamish said: "ick".
+		//Rather than dependency injection here could we use different namespaces?
 
-		if($filter) {
+		if ($filter) {
 			$className = "Orient{$filter}Filter";
-		} else {
+		}
+
+		if (!class_exists($className)) {
+			$className = "{$filter}Filter";
+		}
+
+		if (!class_exists($className)) {
 			$className = 'OrientExactMatchFilter';
 		}
 
-		if(!class_exists($className)) {
+		if (!class_exists($className)) {
 			$className = 'OrientExactMatchFilter';
-
 			array_unshift($modifiers, $filter);
 		}
 
