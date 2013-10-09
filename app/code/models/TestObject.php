@@ -8,5 +8,11 @@ class TestObject extends DataObject {
 		'Code' => 'Varchar(255)',
 		'Locked' => 'Boolean',
 		'Sort' => 'Int'
-	);	
+	);
+
+	private static $summary_fields = array(
+		'ID',
+		'Title',
+		'Code'
+	);
 }

@@ -56,8 +56,7 @@ http://jezzper.com/jezzper/discussions.nsf/0/9D9B9184D94E067CC1257BC2004EE04C
 When creating OrientDB database can specify "document" or "graph". Graph databases are essentially document databases where documents are the nodes and another object called vertices are used to traverse the graph etc. Currently the PHP OrientDB connector only has support for using OrientDB as a document store, not sure how to handle vertices if abilitiy to interact with them was available.
 
 #### IDs are strings (non numeric)
-Several areas in core anticipate a numeric ID, currently the ID field is used to store a copy of the RID for the record which is in the format: x:y where x and y are numeric - x representing the cluster number and y representing the record number in that cluster. It may be preferable to store an integer in the ID field removing the colon e.g: xy. Then need to overload the calls to DO->ID ->getID() etc. with __call() __get() which may be fiddly and might not prevent that many core hacks.
-
+Several areas in core anticipate a numeric ID, currently the ID field is used to store a copy of the RID for the record which is in the format: x:y where x and y are numeric - x representing the cluster number and y representing the record number in that cluster. 
 
 
 

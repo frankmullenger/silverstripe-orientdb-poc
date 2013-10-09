@@ -74,6 +74,31 @@ OrientDB has record level security that can be used to restrict access to record
 
 __Note:__ User passwords are hashed with SHA-256 by default, SilverStripe uses Blowfish for Members table.
 
+### Relation Management
+
+https://github.com/orientechnologies/orientdb/wiki/Tutorial%3A-Relationships  
+https://github.com/orientechnologies/orientdb/wiki/SQL-Create-Link
+
+#### Embedded documents
+
+Associate to a property any valid document object expressed as a valid JSON string.  
+Embedded documents have no RIDs and they live withing the scope of the parent record. If you delete teh parent record its embedded records get deleted.
+
+#### Containers
+
+Special fields that can contain a set of other fields.  
+3 kinds of containers, each can contain embedded documents or RIDs that point to non-embedded records.
+
+RIDs contained in record fields are also called LINKs.
+
+* set - unordered set of elements, array is unique
+* list - ordered sequence of elements, can have duplicates
+* map - set of key/value pairs where keys are strings and values can be any of the allowed values, even other continers
+
+To identify a container value you must use the square brackets like JSON
+
+Need to consider how the data is queried, OrientDB very quick at querying relations but only in one direction, if the queries are likely in the other direction may need to use a LinkSet or similar on the other object for instance.
+
 ## Querying
 
 SELECT [<Projections>] [FROM <Target> [LET <Assignment>*]]
@@ -157,9 +182,33 @@ classes = list all classes in the current database
 create class Student = create a new class  
 create class Person abstract = create a new abstract class  
 create class Student extends Person = create concrete class from abstract class  
-create property Student.FirstName string = create a new string property on Student class  
 info class Student / desc Student = display details about the Student class such as the structure  
+
+### Create properties
+
+create property Student.FirstName string = create a new string property on Student class  
 alter property Student.FirstName min 3 = adding constraint minimum 3 characters  
+
+#### Links
+
+create property Page.Image link File = creating a link in the Page class -> has_one: Image => File  
+insert into Page (Title,Image) values ("Page Two",#14:0) = inserting a link
+
+traverse Image from Page = go through pages table and follow any fields called "Image" to retrieve the related record basically  
+traverse all() from Page = go through pages table and follow all fields  
+traverse any() from Page = go through pages table and follow any fields  
+
+##### Context variables
+
+Variables you can add to the results of the traverse that will give some information on the result set.
+
+* $parent = parent of actual record
+* $current = retrieves current record
+* $depth = current depth of nesting
+* $path = path of current record from root of traversing
+
+select $path from (traverse Image from Page) = get the path for a traverse  
+select Image.Name from (traverse Image from Page) = get the image name from links on page
 
 ### Configuration changes
 

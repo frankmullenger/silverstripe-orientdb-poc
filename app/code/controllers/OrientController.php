@@ -30,14 +30,6 @@ class OrientController extends AppController {
 	}
 	
 	public function index() {
-
-		$member = Member::get()->first();
-		SS_Log::log(new Exception(print_r($member->toMap(), true)), SS_Log::NOTICE);
-
-		// $members = Member::get();
-		// SS_Log::log(new Exception(print_r($members->sql(), true)), SS_Log::NOTICE);
-		// SS_Log::log(new Exception(print_r($members->first(), true)), SS_Log::NOTICE);
-
 		return $this->customise(new ArrayData(array(
 			'Title' => 'Orient DB Demo'
 		)))->renderWith(array(
