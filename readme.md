@@ -40,6 +40,4 @@ Browse to yourdomain.com/orient
 
 Build and populate database with test objects using links provided
 
-Create/Read/Update/Delete test objects using interface
-
-Testing post-receive hook 1.
+Create/Read/Update/Delete test objects using interface.

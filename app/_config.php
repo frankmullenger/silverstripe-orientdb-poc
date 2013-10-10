@@ -54,21 +54,6 @@ switch ($_SERVER['HTTP_HOST']) {
 		break;
 }
 
-//OrientDB configuration for testing
-global $databaseConfigOrient;
-$databaseConfigOrient = array(
-	'type' => 'OrientDatabase',
-	'server' => 'localhost',
-	'port' => 2424,
-	'serverusername' => 'root',
-	'serverpassword' => 'A5D6164BA656854B1879AFE47E54E0B065866ED71A7FFA5C861552573C7D9814',
-	'username' => 'admin',
-	'password' => 'admin',
-	'database' => 'SS_orientdb-app',
-	'cluster' => '',
-	'path' => '/Users/fmullenger/Scripts/orientdb-graphed-1.5.0/databases',
-);
-
 if(!Director::isDev()) {
 	SS_Log::add_writer(
 		new SS_LogEmailWriter(Email::getAdminEmail()), 
@@ -81,6 +66,7 @@ if(isset($_REQUEST['flush'])) {
 	SS_Cache::set_cache_lifetime('any', -1, 100);
 }
 
+//Bypass authentication for access to the admin area
 Object::useCustomClass('MemberLoginForm', 'VoidLoginForm');
 Authenticator::register_authenticator('VoidAuthenticator');
 Authenticator::set_default_authenticator('VoidAuthenticator');
