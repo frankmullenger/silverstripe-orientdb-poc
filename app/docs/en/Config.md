@@ -1,3 +1,8 @@
+# Config
+
+## Sample configuration below
+
+```php
 <?php
 
 global $project;
@@ -6,19 +11,6 @@ $project = 'app';
 require_once("conf/ConfigureFromEnv.php");
 
 switch ($_SERVER['HTTP_HOST']) {
-
-	//Use SQLite3 database
-	case 'sqlite.orientdb-app.local':
-		global $databaseConfig;
-		$databaseConfig = array(
-			'type' => 'SQLiteDatabase',
-			'server' => '',
-			'username' => '',
-			'password' => '',
-			'database' => 'SS_orientdb-app',
-			'path' => '/Users/fmullenger/Sites/orientdb-app/assets/.db',
-		);
-		break;
 
 	//Use OrientDB databse
 	case 'orient.orientdb-app.local':
@@ -37,7 +29,7 @@ switch ($_SERVER['HTTP_HOST']) {
 			'server' => 'localhost',
 			'port' => 2424,
 			'serverusername' => 'root',
-			'serverpassword' => 'A5D6164BA656854B1879AFE47E54E0B065866ED71A7FFA5C861552573C7D9814',
+			'serverpassword' => 'your root password',
 			'username' => 'admin',
 			'password' => 'admin',
 			'database' => 'SS_orientdb-app',
@@ -92,5 +84,5 @@ if (Director::isDev() && defined('SS_DEV_EMAIL')) {
 	SSViewer::flush_template_cache();
 	//$_GET['flush'] = 1;
 }
-
+```
 

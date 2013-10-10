@@ -7,3 +7,4 @@ bin
 /vendor
 /sqlite3
 /docsviewer
+/app/_config.php
