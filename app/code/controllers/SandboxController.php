@@ -13,7 +13,8 @@ class SandboxController extends AppController {
 		'build',
 		'populate',
 		'scratch',
-		'relations'
+		'relations',
+		'manymany'
 	);
 
 	public function init() {

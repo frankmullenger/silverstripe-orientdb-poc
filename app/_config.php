@@ -27,6 +27,10 @@ switch ($_SERVER['HTTP_HOST']) {
 		Object::useCustomClass('RelationList', 'OrientRelationList');
 		Object::useCustomClass('HasManyList', 'OrientHasManyList');
 		Object::useCustomClass('ForeignKey', 'OrientForeignKey');
+
+		//Hide security admin for now
+		CMSMenu::remove_menu_item('SecurityAdmin');
+
 		global $databaseConfig;
 		$databaseConfig = array(
 			'type' => 'OrientDatabase',

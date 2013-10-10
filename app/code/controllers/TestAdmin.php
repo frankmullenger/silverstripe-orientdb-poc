@@ -8,6 +8,8 @@ class TestAdmin extends ModelAdmin {
 
 	private static $menu_title = 'Test';
 
+	private static $menu_priority = 100;
+
 	public $showImportForm = false;
 
 	private static $managed_models = array(
