@@ -284,6 +284,7 @@ class OrientDatabase extends SS_Database {
 	 */
 	public function createTable($table, $fields = null, $indexes = null, $options = null, $advancedOptions = null) {
 
+		//Get parent class to inherit from
 		$parentClass = $this->getParent($table);
 
 		//Create the table

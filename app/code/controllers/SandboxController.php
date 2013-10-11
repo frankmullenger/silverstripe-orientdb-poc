@@ -14,7 +14,8 @@ class SandboxController extends AppController {
 		'populate',
 		'scratch',
 		'relations',
-		'manymany'
+		'manymany',
+		'inheritance'
 	);
 
 	public function init() {
@@ -131,8 +132,6 @@ class SandboxController extends AppController {
 
 	public function manymany() {
 
-		
-
 		//Create a post and relate it to an author
 		// $i = rand(1,999);
 
@@ -156,6 +155,32 @@ class SandboxController extends AppController {
 
 		return $this->customise(new ArrayData(array(
 			'Title' => 'Orient DB Sandbox Many_Many'
+		)))->renderWith(array(
+			'SandboxController',
+			'AppController'
+		));
+	}
+
+	public function inheritance() {
+
+		//Create a child class and compare the queries
+		$rand = rand(1, 999);
+		$child = Family_Child::create();
+		$child->update(array(
+			'Name' => "Name $rand",
+			'Title' => 'Child'
+		));
+		$result = $child->write();
+
+		SS_Log::log(new Exception(print_r($result, true)), SS_Log::NOTICE);
+
+		$child = Family_Child::get()
+			->first();
+
+		SS_Log::log(new Exception(print_r($child->toMap(), true)), SS_Log::NOTICE);
+
+		return $this->customise(new ArrayData(array(
+			'Title' => 'Orient DB Sandbox inheritance'
 		)))->renderWith(array(
 			'SandboxController',
 			'AppController'

@@ -6,6 +6,9 @@ class OrientDataQuery extends DataQuery {
 	 * Set up the simplest initial query
 	 */
 	public function initialiseQuery() {
+
+		//@todo could probably use ClassInfo::hasTable() instead here
+
 		// Get the tables to join to.
 		// Don't get any subclass tables - let lazy loading do that.
 		$tableClasses = ClassInfo::ancestry($this->dataClass, true);
@@ -22,7 +25,8 @@ class OrientDataQuery extends DataQuery {
 			}
 		}
 
-		$baseClass = array_shift($tableClasses);
+		//Base table is not an ancestor in OrientDB
+		$baseClass = array_pop($tableClasses);
 
 		// Build our intial query
 		$this->query = new OrientSQLQuery(array());
@@ -73,7 +77,9 @@ class OrientDataQuery extends DataQuery {
 		}
 
 		$tableNames = array_keys($tableClasses);
-		$baseClass = $tableNames[0];
+		
+		//Base class is not an ancestor in OrientDB
+		$baseClass = array_pop($tableNames);
 
 		// SS_Log::log(new Exception(print_r($queriedColumns, true)), SS_Log::NOTICE);
 		// SS_Log::log(new Exception(print_r($tableNames, true)), SS_Log::NOTICE);
