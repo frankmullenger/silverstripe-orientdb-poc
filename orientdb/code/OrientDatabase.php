@@ -618,9 +618,10 @@ class OrientDatabase extends SS_Database {
 	 * @param string $indexSchema A list of indexes to create. See {@link requireIndex()}
 	 * @param array $options
 	 */
-	public function requireTable($table, $fieldSchema = null, $indexSchema = null, $hasAutoIncPK=true, $options = Array(), $extensions=false) {
+	public function requireTable($table, $fieldSchema = null, $indexSchema = null, $hasAutoIncPK=false, $options = Array(), $extensions=false) {
 
-		//@todo create tables extending other tables for inheritance issues
+		//We never have auto incrementing ID field in OrientDB
+		$hasAutoIncPK = false;
 
 		if (!isset($this->tableList[strtolower($table)])) {
 			$this->transCreateTable($table, $options, $extensions);
