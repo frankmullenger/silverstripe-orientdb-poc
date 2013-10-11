@@ -54,6 +54,15 @@ So now we cannot just enter data from whatever fields we like e.g text or title.
 
 Can alter properties using ALTER PROPERTY ... need to alter one at a time.
 
+#### Inheritance
+
+```SQL
+create class Child extends Parent
+```
+
+* Child classes will have structure updated when Parent structure updates
+* Selecting from parent includes children also
+
 ### Abstract Classes
 
 Abstract classes not associated to any cluster (cluster ID -1)  

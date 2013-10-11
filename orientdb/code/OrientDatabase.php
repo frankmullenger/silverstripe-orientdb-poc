@@ -14,6 +14,10 @@ require_once BASE_PATH . '/vendor/orientdb-php/orientdb-php/OrientDB/OrientDB.ph
  */
 class OrientDatabase extends SS_Database {
 
+	/**
+	 * Miscellaneous DB instance variables
+	 * @todo document these
+	 */
 	protected $db;
 	protected $dbOpen;
 	protected $tableList = array(); //@todo this is already in parent class actually, clashes?
@@ -253,6 +257,19 @@ class OrientDatabase extends SS_Database {
 	}
 
 	/**
+	 * Helper method to get parent class which has a class in the database.
+	 * 
+	 * @param  string $table Class name we are finding parent for
+	 * @return mixed  string|null Returns name of parent class if it exists
+	 */
+	private function getParent($table) {
+		$ancestry = ClassInfo::ancestry($table, true);
+		unset($ancestry[$table]);
+		$ancestry = array_reverse($ancestry);
+		return array_shift($ancestry);
+	}
+
+	/**
 	 * Create a new table.
 	 *
 	 * @todo support for indexes
@@ -267,9 +284,18 @@ class OrientDatabase extends SS_Database {
 	 */
 	public function createTable($table, $fields = null, $indexes = null, $options = null, $advancedOptions = null) {
 
+		$parentClass = $this->getParent($table);
+
 		//Create the table
 		try {
-			$createTableSQL = "create class $table";
+
+			if ($parentClass) {
+				$createTableSQL = "create class $table extends $parentClass";
+			}
+			else {
+				$createTableSQL = "create class $table";
+			}
+
 			$tableResult = $this->db->command(OrientDB::COMMAND_QUERY, $createTableSQL);
 		}
 		catch (OrientDBException $e) {
@@ -294,7 +320,8 @@ class OrientDatabase extends SS_Database {
 	 */
 	public function alterTable($table, $newFields = null, $newIndexes = null, $alteredFields = null,
 			$alteredIndexes = null, $alteredOptions=null, $advancedOptions=null) {
-
+		SS_Log::log(new Exception(print_r(__method__, true)), SS_Log::NOTICE);
+		exit(__method__);
 	}
 
 	/**
@@ -625,7 +652,7 @@ class OrientDatabase extends SS_Database {
 		//DB ABSTRACTION: we need to convert this to a db-specific version:
 		$this->requireField($table, 'ID', DB::getConn()->IdColumn(false, $hasAutoIncPK));
 
-		//Update the database schema, which is all kept in a single table for convenience
+		//Update the database schema, which is all kept in a single table in OrientDB
 		$this->writeSchema($table, $fieldSchema);
 
 		// Create custom fields
@@ -840,6 +867,7 @@ class OrientDatabase extends SS_Database {
 	private function writeSchema($table, $schema) {
 
 		//@todo this needs to be safe for using on the first DB build
+		//@todo there appears to be a bug where /dev/build needs to be run twice?
 		try {
 			$schematic = OrientSchema::get()
 				->filter(array('Class' => $table))
