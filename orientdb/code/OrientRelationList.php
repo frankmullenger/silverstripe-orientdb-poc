@@ -47,6 +47,26 @@ abstract class OrientRelationList extends OrientDataList {
 		return $list;
 	}
 
+	// public function forParentClass($parentClass) {
+
+	// 	$list = $this->alterDataQuery(function($query, $list) use ($parentClass){
+
+	// 		// Check if there is an existing filter, remove if there is
+	// 		$currentFilter = $query->getQueryParam('Parent.Class');
+	// 		if ($currentFilter) {
+	// 			try {
+	// 				$query->removeFilterOn($currentFilter);
+	// 			}
+	// 			catch (Exception $e) { /* NOP */ }
+	// 		}
+
+	// 		// Add the new filter
+	// 		$query->setQueryParam('Parent.Class', $parentClass);
+	// 	});
+
+	// 	return $list;
+	// }
+
 	/**
 	 * Returns a where clause that filters the members of this relationship to 
 	 * just the related items.

@@ -35,19 +35,16 @@ class OrientManyManyList extends OrientRelationList {
 	 * @example new ManyManyList('Group','Group_Members', 'GroupID', 'MemberID');
 	 */
 	public function __construct($dataClass, $joinTable, $localKey, $foreignKey, $extraFields = array()) {
+
 		parent::__construct($dataClass);
-		$this->joinTable = $joinTable;
-		$this->localKey = $localKey;
-		$this->foreignKey = $foreignKey;
-		$this->extraFields = $extraFields;
 
-		$baseClass = ClassInfo::baseDataClass($dataClass);
+		// No join table required
+		$this->joinTable = null; 
+		$this->localKey = null;
+		$this->foreignKey = null;
+		$this->extraFields = null;
 
-		// Join to the many-many join table
-		$this->dataQuery->innerJoin($joinTable, "{$joinTable}.{$this->localKey} = {$baseClass}.ID");
-
-		// Query the extra fields from the join table
-		if($extraFields) $this->dataQuery->selectFromTable($joinTable, array_keys($extraFields));
+		// $baseClass = ClassInfo::baseDataClass($dataClass);
 	}
 
 	/**
@@ -55,16 +52,7 @@ class OrientManyManyList extends OrientRelationList {
 	 * @return string
 	 */
 	protected function foreignIDFilter($id = null) {
-		if ($id === null) $id = $this->getForeignID();
-
-		// Apply relation filter
-		if(is_array($id)) {
-			return "$this->joinTable.$this->foreignKey IN ['" . 
-				implode("', '", array_map('Convert::raw2sql', $id)) . "']";
-		} else if($id !== null){
-			return "$this->joinTable.$this->foreignKey = '" . 
-				Convert::raw2sql($id) . "'";
-		}
+		return;
 	}
 
 	/**
@@ -77,7 +65,7 @@ class OrientManyManyList extends OrientRelationList {
 	 * @return string
 	 */
 	protected function foreignIDWriteFilter($id = null) {
-		return $this->foreignIDFilter($id);
+		return;
 	}
 
 	/**
@@ -87,8 +75,15 @@ class OrientManyManyList extends OrientRelationList {
 	 */
 	public function add($item, $extraFields = null) {
 
+		//Note: extra fields are not supported
 
 		SS_Log::log(new Exception(print_r('adding a many_many relation here', true)), SS_Log::NOTICE);
+		SS_Log::log(new Exception(print_r($item->toMap(), true)), SS_Log::NOTICE);
+
+		$foreignID = $this->getForeignID();
+		SS_Log::log(new Exception(print_r($foreignID, true)), SS_Log::NOTICE);
+
+		//Want to update the OrientQuery with some way to add to the link set
 
 		if (is_numeric($item)) {
 			$itemID = $item;
@@ -100,16 +95,29 @@ class OrientManyManyList extends OrientRelationList {
 			throw new InvalidArgumentException("ManyManyList::add() expecting a $this->dataClass object, or ID value", E_USER_ERROR);
 		}
 
-		$foreignIDs = $this->getForeignID();
-		$foreignFilter = $this->foreignIDWriteFilter();
-
 		// Validate foreignID
-		if(!$foreignIDs) {
+		if(!$foreignID) {
 			throw new Exception("ManyManyList::add() can't be called until a foreign ID is set", E_USER_WARNING);
 		}
 
-		SS_Log::log(new Exception(print_r($foreignFilter, true)), SS_Log::NOTICE);
-		SS_Log::log(new Exception(print_r($foreignIDs, true)), SS_Log::NOTICE);
+		SS_Log::log(new Exception(print_r($itemID, true)), SS_Log::NOTICE);
+		SS_Log::log(new Exception(print_r($this->dataClass, true)), SS_Log::NOTICE);
+		// SS_Log::log(new Exception(print_r($this->dataQuery, true)), SS_Log::NOTICE);
+
+
+		if ($itemID && $foreignID) {
+			$manipulation = array();
+
+			//We are updating a record
+			$table = '#' . $foreignID;
+			$manipulation[$table]['command'] = 'update container';
+			$manipulation[$table]['container_command'] = 'add';
+
+			//@todo need to get the field "Tags" here
+			//need to get the actual tags to add
+			//call DB::manipulate() on this
+		}
+
 
 		//@todo need to inspect the linklist here instead
 		// if($foreignFilter) {
@@ -215,36 +223,14 @@ class OrientManyManyList extends OrientRelationList {
 	}
 
 	/**
-	 * Find the extra field data for a single row of the relationship
-	 * join table, given the known child ID.
-	 *
-	 * @todo Add tests for this / refactor it / something
+	 * No support for extra fields
 	 *	
 	 * @param string $componentName The name of the component
 	 * @param int $itemID The ID of the child for the relationship
 	 * @return array Map of fieldName => fieldValue
 	 */
-	function getExtraData($componentName, $itemID) {
+	public function getExtraData($componentName, $itemID) {
 		$result = array();
-
-		if(!is_numeric($itemID)) {
-			user_error('ComponentSet::getExtraData() passed a non-numeric child ID', E_USER_ERROR);
-		}
-
-		// @todo Optimize into a single query instead of one per extra field
-		if($this->extraFields) {
-			foreach($this->extraFields as $fieldName => $dbFieldSpec) {
-				$query = new SQLQuery("$fieldName", array("$this->joinTable"));
-				if($filter = $this->foreignIDWriteFilter($this->getForeignID())) {
-					$query->setWhere($filter);
-				} else {
-					user_error("Can't call ManyManyList::getExtraData() until a foreign ID is set", E_USER_WARNING);
-				}
-				$query->addWhere("$this->localKey = {$itemID}");
-				$result[$fieldName] = $query->execute()->value();
-			}
-		}
-		
 		return $result;
 	}
 
@@ -254,7 +240,8 @@ class OrientManyManyList extends OrientRelationList {
 	 * @return string the name of the table
 	 */
 	public function getJoinTable() {
-		return $this->joinTable;
+		//No join table necessary
+		return null;
 	}
 
 	/**

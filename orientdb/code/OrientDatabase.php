@@ -1038,6 +1038,8 @@ class OrientDatabase extends SS_Database {
 	 */
 	public function manipulate($manipulation) {
 
+		//@todo maybe manipulations need to include an RID 
+
 		if ($manipulation) foreach($manipulation as $table => $writeInfo) {
 
 			//Set the fields
@@ -1090,6 +1092,11 @@ class OrientDatabase extends SS_Database {
 						$valueList = implode(", ", $valueList);
 						$sql = "INSERT INTO $table ($columnList) VALUES ($valueList)";
 						$this->query($sql);
+						break;
+
+					//Update container field on a class
+					case "update container"
+
 						break;
 
 					default:
