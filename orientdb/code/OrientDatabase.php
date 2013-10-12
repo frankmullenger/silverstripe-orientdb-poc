@@ -772,6 +772,7 @@ class OrientDatabase extends SS_Database {
 		if (!is_string($spec)) {
 			$spec['parts']['name'] = $field;
 			$spec_orig['parts']['name'] = $field;
+
 			//Convert the $spec array into a database-specific string
 			$spec = DB::getConn()->$spec['type']($spec['parts'], true);
 		}
@@ -809,10 +810,11 @@ class OrientDatabase extends SS_Database {
 		if (is_array($spec_orig)) {
 			$spec_orig = DB::getConn()->$spec_orig['type']($spec_orig['parts']);
 		}
-		
+
 		if ($newTable || $fieldValue=='') {
+
 			$this->transCreateField($table, $field, $spec_orig);
-			$this->alterationMessage("Field $table.$field: created as $spec_orig","created");
+			$this->alterationMessage("Field {$table}.{$field}: created as $spec_orig","created");
 		} 
 		else if ($fieldValue != $specValue) {
 
@@ -1008,6 +1010,22 @@ class OrientDatabase extends SS_Database {
 	 */
 	public function date($values){
 		return 'string';
+	}
+
+	/**
+	 * Return the string used to create this particular field in the database
+	 *
+	 * @see  self::createTable()
+	 * @param  array $values
+	 * @return string 
+	 */
+	public function linkset($values){
+
+		//@todo if the relationClass is not yet created in the DB nothing will happen
+		//so this creates a bit of an issue with having to run the /dev/build twice
+
+		//Can assume that relationClass value exists @see OrientLinkSet::requireField()
+		return 'linkset ' . $values['relationClass'];
 	}
 
 	/**

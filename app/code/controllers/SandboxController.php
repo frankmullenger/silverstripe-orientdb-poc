@@ -133,11 +133,11 @@ class SandboxController extends AppController {
 	public function manymany() {
 
 		//Create a post and relate it to an author
-		// $i = rand(1,999);
+		$i = rand(1,999);
 
-		// // $author = new Person();
-		// // $author->Name = "Person $i";
-		// // $id = $author->write();
+		$article = new Article();
+		$article->Name = "Article $i";
+		$id = $article->write();
 
 		// // $post = new Post();
 		// // $post->Title = "Post Title $i";
@@ -152,6 +152,22 @@ class SandboxController extends AppController {
 
 		// $posts = $author->Posts();
 		// SS_Log::log(new Exception(print_r($posts->map()->toArray(), true)), SS_Log::NOTICE);
+
+		$range = range(1, 10, rand(1,10));
+		SS_Log::log(new Exception(print_r($range, true)), SS_Log::NOTICE);
+
+		foreach ($range as $val) {
+			$tag = new Tag();
+			$tag->Name = "Tag $val";
+			$tag->write();
+
+			$article->Tags()->add($tag);
+		}
+
+		// $admin = Member::create();
+		// $admin->FirstName = _t('Member.DefaultAdminFirstname', 'Default Admin');
+		// $admin->write();
+		// $admin->Groups()->add($adminGroup);
 
 		return $this->customise(new ArrayData(array(
 			'Title' => 'Orient DB Sandbox Many_Many'
