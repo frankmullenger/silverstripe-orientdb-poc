@@ -36,6 +36,7 @@ class OrientDataQuery extends DataQuery {
 			$this->sort($sort);
 		}
 
+		//TODO: sometimes we want to set from to be the @RID
 		$this->query->setFrom("$baseClass");
 
 		$obj = Injector::inst()->get($baseClass);
@@ -204,6 +205,11 @@ class OrientDataQuery extends DataQuery {
 	public function count() {
 		$baseClass = ClassInfo::baseDataClass($this->dataClass);
 		return $this->getFinalisedQuery()->count('*');
+	}
+
+	public function traverse($containerName, $rid) {
+		$this->query->traverse($containerName, $rid);
+		return $this;
 	}
 }
 

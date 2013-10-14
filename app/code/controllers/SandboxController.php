@@ -153,16 +153,19 @@ class SandboxController extends AppController {
 		// $posts = $author->Posts();
 		// SS_Log::log(new Exception(print_r($posts->map()->toArray(), true)), SS_Log::NOTICE);
 
-		$range = range(1, 10, rand(1,10));
-		SS_Log::log(new Exception(print_r($range, true)), SS_Log::NOTICE);
+		$tags = $article->Tags();
+		SS_Log::log(new Exception(print_r($tags->sql(), true)), SS_Log::NOTICE);
 
-		foreach ($range as $val) {
-			$tag = new Tag();
-			$tag->Name = "Tag $val";
-			$tag->write();
+		// $range = range(10, 30, rand(1,10));
+		// SS_Log::log(new Exception(print_r($range, true)), SS_Log::NOTICE);
 
-			$article->Tags()->add($tag);
-		}
+		// foreach ($range as $val) {
+		// 	$tag = new Tag();
+		// 	$tag->Name = "Tag $val";
+		// 	$tag->write();
+
+		// 	$article->Tags()->add($tag);
+		// }
 
 		// $admin = Member::create();
 		// $admin->FirstName = _t('Member.DefaultAdminFirstname', 'Default Admin');

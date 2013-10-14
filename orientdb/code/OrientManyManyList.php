@@ -77,13 +77,9 @@ class OrientManyManyList extends OrientRelationList {
 
 		//Note: extra fields are not supported
 
-		SS_Log::log(new Exception(print_r('adding a many_many relation here', true)), SS_Log::NOTICE);
+		SS_Log::log(new Exception(print_r('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%', true)), SS_Log::NOTICE);
 		SS_Log::log(new Exception(print_r($item->toMap(), true)), SS_Log::NOTICE);
-
-		$foreignID = $this->getForeignID();
-		SS_Log::log(new Exception(print_r($foreignID, true)), SS_Log::NOTICE);
-
-		//Want to update the OrientQuery with some way to add to the link set
+		SS_Log::log(new Exception(print_r($this->dataClass, true)), SS_Log::NOTICE);
 
 		if (is_numeric($item)) {
 			$itemID = $item;
@@ -95,28 +91,52 @@ class OrientManyManyList extends OrientRelationList {
 			throw new InvalidArgumentException("ManyManyList::add() expecting a $this->dataClass object, or ID value", E_USER_ERROR);
 		}
 
-		// Validate foreignID
+		// Validate foreignID, ID of the record that owns the LinkSet
+		$foreignID = $this->getForeignID();
 		if(!$foreignID) {
 			throw new Exception("ManyManyList::add() can't be called until a foreign ID is set", E_USER_WARNING);
 		}
-
-		SS_Log::log(new Exception(print_r($itemID, true)), SS_Log::NOTICE);
-		SS_Log::log(new Exception(print_r($this->dataClass, true)), SS_Log::NOTICE);
-		// SS_Log::log(new Exception(print_r($this->dataQuery, true)), SS_Log::NOTICE);
+		SS_Log::log(new Exception(print_r($foreignID, true)), SS_Log::NOTICE);
+		
 
 
 		if ($itemID && $foreignID) {
 			$manipulation = array();
 
-			//We are updating a record
-			$table = '#' . $foreignID;
-			$manipulation[$table]['command'] = 'update container';
-			$manipulation[$table]['container_command'] = 'add';
+			$tableName = $this->getParentClass();
+			SS_Log::log(new Exception(print_r($tableName, true)), SS_Log::NOTICE);
 
-			//@todo need to get the field "Tags" here
-			//need to get the actual tags to add
-			//call DB::manipulate() on this
+			$componentName = $this->getComponentName();
+			SS_Log::log(new Exception(print_r($componentName, true)), SS_Log::NOTICE);
+
+			//Unfortunately need to use "set" command the first time
+			$hasExisting = false;
+			$parentItem = $tableName::get()
+				->filter(array('ID' => $foreignID))
+				->first();
+
+			$existingComponent = $parent->Tags()->exists();
+
+			// SS_Log::log(new Exception(print_r($parentItem, true)), SS_Log::NOTICE);
+
+			// SS_Log::log(new Exception(print_r($this->exists(), true)), SS_Log::NOTICE);
+
+			//TODO need to use "set" command the first time
+
+			//We are updating a record's LinkSet
+			$manipulation[$tableName]['command'] = 'update_container';
+
+			//Use "set" command the first time we add entries to this list
+			$command = ($hasExisting) ? 'add' : 'set';
+			$manipulation[$tableName]['container_command'] = "$command $componentName";
+			$manipulation[$tableName]['id'] = $foreignID;
+			$manipulation[$tableName]['container_values'] = '[#' . $itemID . ']';
+
+
+			DB::manipulate($manipulation);
 		}
+
+		return;
 
 
 		//@todo need to inspect the linklist here instead

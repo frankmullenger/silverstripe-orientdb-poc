@@ -2,6 +2,8 @@
 
 class OrientSQLQuery extends SQLQuery {
 
+	protected $traverse = array();
+
 	/**
 	 * Return the number of rows in this query if the limit were removed.  Useful in paged data sets.
 	 * 
@@ -128,7 +130,7 @@ class OrientSQLQuery extends SQLQuery {
 	 */
 	public function getFrom() {
 
-		//@todo @orientdb strip out doble quotes
+		//@todo @orientdb strip out double quotes
 		return $this->from;
 	}
 
@@ -138,7 +140,7 @@ class OrientSQLQuery extends SQLQuery {
 	 */
 	public function getHaving() {
 
-		//@todo @orientdb strip out doble quotes
+		//@todo @orientdb strip out double quotes
 		return $this->having;
 	}
 
@@ -148,7 +150,7 @@ class OrientSQLQuery extends SQLQuery {
 	 */
 	public function getGroupBy() {
 
-		//@todo @orientdb strip out doble quotes
+		//@todo @orientdb strip out double quotes
 		return $this->groupby;
 	}
 
@@ -204,21 +206,8 @@ class OrientSQLQuery extends SQLQuery {
 		return $orderBy;
 	}
 
-	public function addLeftJoin($table, $onPredicate, $tableAlias = '', $order = 20) {
-
-		//@todo @orientdb Disable left joins in OrientDB need to be handled in a different way
-		return $this;
-
-		// if(!$tableAlias) {
-		// 	$tableAlias = $table;
-		// }
-		// $this->from[$tableAlias] = array(
-		// 	'type' => 'LEFT',
-		// 	'table' => $table,
-		// 	'filter' => array($onPredicate), 
-		// 	'order' => $order
-		// );
-		// return $this;
+	public function traverse() {
+		//TODO set up the query to traverse
 	}
 
 	/**
@@ -261,5 +250,41 @@ class OrientSQLQuery extends SQLQuery {
 			return '';
 		}
 		return $sql;
+	}
+
+	/**
+	 * Joins are not supported in OrientDB
+	 */
+
+	public function addLeftJoin($table, $onPredicate, $tableAlias = '', $order = 20) {
+
+		//@todo @orientdb Disable left joins in OrientDB need to be handled in a different way
+		return $this;
+	}
+
+	public function leftjoin($table, $onPredicate, $tableAlias = null, $order = 20) {
+		Deprecation::notice('3.0', 'Please use addLeftJoin() instead!');
+		$this->addLeftJoin($table, $onPredicate, $tableAlias);
+	}
+
+	public function addInnerJoin($table, $onPredicate, $tableAlias = null, $order = 20) {
+		return $this;
+	}
+
+	public function innerjoin($table, $onPredicate, $tableAlias = null, $order = 20) {
+		Deprecation::notice('3.0', 'Please use addInnerJoin() instead!');
+		return $this->addInnerJoin($table, $onPredicate, $tableAlias, $order);
+	}
+
+	public function addFilterToJoin($table, $filter) {
+		return $this;
+	}
+
+	public function setJoinFilter($table, $filter) {
+		return $this;
+	}
+
+	public function isJoinedTo($tableAlias) {
+		return false;
 	}
 }

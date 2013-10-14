@@ -43,7 +43,9 @@ Can RID  xx:xx go into the numeric ID field? - this would be ideal
 Parts of core bypass the ORM and make direct queries, not sure to what extent this is a problem. This issue will likely affect third party modules.
 
 #### Joins
-Relations need to move from using SQL "joins" to using "traverses". Traverse queries may not be as structured and easy to generate as joins. The data for the joins is stored in "sets" on each document, currently no support for transactions in the PHP connector to OrientDB so there may be an issue with updating a relation if it involves updating a number of documents.
+Relations need to move from using SQL "joins" to using "traverses". Traverse queries may not be as structured and easy to generate as joins. The data for the joins is stored in "containers" on each document, currently no support for transactions in the PHP connector to OrientDB so there may be an issue with updating a relation if it involves updating a number of documents.
+
+Taking exisitng innerJoin() and leftJoin() methods on DataList and making them into meaningful traverses in OrientDB would be very difficult which is perhaps quite a large issue for third party modules that have made use of SQL joins.
 
 #### Inheritance
 Class inheritance in Silverstripe results in multiple tables being created and joined. RIDs may need to be unique between tables, so this architecture will need to be reworked. Similar issues will exist for versioning, translatable etc.

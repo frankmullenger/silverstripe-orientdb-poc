@@ -102,7 +102,7 @@ RIDs contained in record fields are also called LINKs.
 
 * set - unordered set of elements, array is unique
 * list - ordered sequence of elements, can have duplicates
-* map - set of key/value pairs where keys are strings and values can be any of the allowed values, even other continers
+* map - set of key/value pairs where keys are strings and values can be any of the allowed values, even other containers
 
 To identify a container value you must use the square brackets like JSON
 
@@ -223,11 +223,11 @@ select Image.Name from (traverse Image from Page) = get the image name from link
 
 set limit 100 = increase default limit for browse queries to 100
 
-## Insert records
+### Insert records
 
 insert into posts (title,text) values ("title 1","text 1"), ("title 2","text 2"), ("title 3","text 3") = insert records
 
-## Deleting records
+### Deleting records
 
 truncate class <class name> = empty a table, can also truncate record to delete a record or truncate cluster
 
@@ -238,5 +238,17 @@ __Note:__ When deleting a record its RID becomes available to be reassigned to a
 browse class OUser = display records in the class  
 clusters = list the clusters  
 load record #5:0 = load a record for inspecting it  
+
+### Relation management
+
+create property Article.Tig linkset Tag = create linkset for may_many from Article to Tags  
+insert into #27:0 (Tig) values ([#29:0,#29:2]) = insert some tags to the relation on article  
+update #27:0 set Tags = [#28:0] = update the tags relation  
+update #27:0 add Tags = [#28:2] = add to the tags relation  
+update #27:0 remove Tags = #28:2 = remove tags  
+traverse Tags from #27:0 = query for the relation
+
+
+
 
 

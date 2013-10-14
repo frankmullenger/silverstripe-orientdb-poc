@@ -91,4 +91,18 @@ class OrientDataList extends DataList {
 	public function byID($id) {
 		return $this->filter(array('ID' => $id))->first();
 	}
+
+	public function traverse($containerName, $rid) {
+		return $this->alterDataQuery(function($query) use ($containerName, $rid){
+			$query->traverse($containerName, $rid);
+		});
+	}
+
+	public function innerJoin($table, $onClause, $alias = null) {
+		user_error("OrientDB does not support inner joins, need to refactor to traversal.", E_USER_ERROR);
+	}
+
+	public function leftJoin($table, $onClause, $alias = null) {
+		user_error("OrientDB does not support left joins, need to refactor to traversal.", E_USER_ERROR);
+	}
 }

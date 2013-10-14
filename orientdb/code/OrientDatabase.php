@@ -1038,7 +1038,7 @@ class OrientDatabase extends SS_Database {
 	 */
 	public function manipulate($manipulation) {
 
-		//@todo maybe manipulations need to include an RID 
+		//@todo Use manipulation ID field if it exists to set from to speed things up
 
 		if ($manipulation) foreach($manipulation as $table => $writeInfo) {
 
@@ -1095,8 +1095,17 @@ class OrientDatabase extends SS_Database {
 						break;
 
 					//Update container field on a class
-					case "update container"
+					case "update_container":
+						SS_Log::log(new Exception(print_r('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^', true)), SS_Log::NOTICE);
+						SS_Log::log(new Exception(print_r($manipulation, true)), SS_Log::NOTICE);
 
+						//update #27:0 set Tags = [#28:0]
+
+						$rid = '#' . $writeInfo['id'];
+						$containerCommand = $writeInfo['container_command'];
+						$containerValues = $writeInfo['container_values'];
+						$sql = "UPDATE $rid $containerCommand = $containerValues";
+						$this->query($sql);
 						break;
 
 					default:
