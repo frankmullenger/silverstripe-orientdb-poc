@@ -70,3 +70,12 @@ Numerous search filters need to be overridden, currently only ExactMatchFilter h
 Currently the PHP connector module only supports the graph database, this does not restrict the CMS but is a limitation of the system currently. 
 
 
+## Limitations
+
+#### Cannot have many_many extra fields
+Many_many relations are not represented with a join table but with containers on each class such as LinkSet. 
+
+
+
+
+

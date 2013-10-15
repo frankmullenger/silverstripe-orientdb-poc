@@ -151,8 +151,7 @@ class SandboxController extends AppController {
 		$article->Name = "Article $i";
 		$id = $article->write();
 
-		$range = range(10, 30, rand(1,10));
-		SS_Log::log(new Exception(print_r($range, true)), SS_Log::NOTICE);
+		$range = array(1,2);
 
 		foreach ($range as $val) {
 			$tag = new Tag();
