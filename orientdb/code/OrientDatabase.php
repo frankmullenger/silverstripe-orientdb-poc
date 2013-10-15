@@ -1136,5 +1136,18 @@ class OrientDatabase extends SS_Database {
 		return "'" . Convert::raw2sql($string) . "'";
 	}
 
+	public function clearTable($table) {
+
+		//Don't want to clear tables like OUser etc.
+		if (ClassInfo::exists($table)) {
+			try {
+				DB::query("TRUNCATE class $table");
+			}
+			catch (Exception $e) {
+				//@todo handle this
+			}
+		}
+	}
+
 }
 
