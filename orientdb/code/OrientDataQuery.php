@@ -88,37 +88,6 @@ class OrientDataQuery extends DataQuery {
 		// SS_Log::log(new Exception(print_r($this->collidingFields, true)), SS_Log::NOTICE);
 		// SS_Log::log(new Exception(print_r($query->sql(), true)), SS_Log::NOTICE);
 
-		// Iterate over the tables and check what we need to select from them. If any selects are made (or the table is
-		// required for a select)
-		// foreach($tableClasses as $tableClass) {
-
-		// 	$joinTable = false;
-
-		// 	// If queriedColumns is set, then check if any of the fields are in this table.
-		// 	if ($queriedColumns) {
-		// 		$tableFields = DataObject::database_fields($tableClass);
-		// 		$selectColumns = array();
-		// 		// Look through columns specifically requested in query (or where clause)
-		// 		foreach ($queriedColumns as $queriedColumn) {
-		// 			if (array_key_exists($queriedColumn, $tableFields)) {
-		// 				$selectColumns[] = $queriedColumn;
-		// 			}
-		// 		}
-
-		// 		$this->selectColumnsFromTable($query, $tableClass, $selectColumns);
-		// 		// if ($selectColumns && $tableClass != $baseClass) {
-		// 		// 	$joinTable = true;
-		// 		// }
-		// 	} else {
-		// 		$this->selectColumnsFromTable($query, $tableClass);
-		// 		// if ($tableClass != $baseClass) $joinTable = true;
-		// 	}
-
-		// 	// if ($joinTable) {
-		// 	// 	$query->addLeftJoin($tableClass, "$tableClass.ID = $baseClass.ID", $tableClass, 10) ;
-		// 	// }
-		// }
-
 		// Resolve colliding fields
 		if($this->collidingFields) {
 			foreach($this->collidingFields as $k => $collisions) {

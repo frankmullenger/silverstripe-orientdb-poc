@@ -13,6 +13,7 @@ class SandboxController extends AppController {
 		'build',
 		'populate',
 		'scratch',
+		'getone',
 		'relations',
 		'manymany',
 		'inheritance'
@@ -99,6 +100,32 @@ class SandboxController extends AppController {
 		));
 	}
 
+	public function getone() {
+
+		$i = rand(1,999);
+
+		$post = new Post();
+		$post->Title = "Post Title $i";
+		$post->write();
+
+		$post = Post::get()->first();
+
+		return $this->customise(new ArrayData(array(
+			'Title' => 'Orient DB Sandbox get one'
+		)))->renderWith(array(
+			'SandboxController',
+			'AppController'
+		));
+	}
+
+	public function haseone() {
+
+	}
+
+	public function hasmany() {
+
+	}
+
 	public function relations() {
 
 		//Create a post and relate it to an author
@@ -131,18 +158,6 @@ class SandboxController extends AppController {
 	}
 
 	public function manymany() {
-
-		//Get a many_many component that already exists
-		// $article = Article::get()
-		// 	->filter(array('ID' => '27:0'))
-		// 	->first();
-		// SS_Log::log(new Exception(print_r($article->toMap(), true)), SS_Log::NOTICE);
-
-		// $tags = $article->Tags();
-		// foreach ($tags as $tag) {
-		// 	SS_Log::log(new Exception(print_r($tag, true)), SS_Log::NOTICE);
-		// }
-
 
 		//Create a post and relate it to an author
 		$i = rand(1, 999);

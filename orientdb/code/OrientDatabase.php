@@ -1077,20 +1077,16 @@ class OrientDatabase extends SS_Database {
 				switch($writeInfo['command']) {
 					case "update":
 
-						//@todo refactor to use FROM $rid where possible (quicker than where @rid = #x:y)
+						//Select from RID is faster than select from TableName and we don't nee the where
+						$rid = '#' . $writeInfo['id'];
+						$table = $rid;
 
 						// Test to see if this update query shouldn't, in fact, be an insert
-						if (!isset($writeInfo['where']) && isset($writeInfo['id'])) {
-							$rid = '#' . $writeInfo[id];
-							//Note: Best to avoid using where @rid = #x:y but for now...
-							$writeInfo['where'] = "@rid = " . $rid;
-						}
-
 						//Note: If this fails will fall onto "insert" below and ID will not match RID... bit of a problem
-						if ($this->query("SELECT * FROM $table WHERE $writeInfo[where]")->value()) {
+						if ($this->query("SELECT * FROM $table")->value()) {
 
 							$fieldList = implode(", ", $fieldList);
-							$sql = "UPDATE $table SET $fieldList WHERE $writeInfo[where]";
+							$sql = "UPDATE $table SET $fieldList";
 							$this->query($sql);
 							break;
 						}
@@ -1111,10 +1107,6 @@ class OrientDatabase extends SS_Database {
 
 					//Update container field on a class
 					case "update_container":
-						SS_Log::log(new Exception(print_r('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^', true)), SS_Log::NOTICE);
-						SS_Log::log(new Exception(print_r($manipulation, true)), SS_Log::NOTICE);
-
-						//update #27:0 set Tags = [#28:0]
 
 						$rid = '#' . $writeInfo['id'];
 						$containerCommand = $writeInfo['container_command'];
