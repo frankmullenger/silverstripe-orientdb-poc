@@ -77,10 +77,6 @@ class OrientManyManyList extends OrientRelationList {
 
 		//Note: extra fields are not supported
 
-		SS_Log::log(new Exception(print_r('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%', true)), SS_Log::NOTICE);
-		SS_Log::log(new Exception(print_r($item->toMap(), true)), SS_Log::NOTICE);
-		SS_Log::log(new Exception(print_r($this->dataClass, true)), SS_Log::NOTICE);
-
 		if (is_numeric($item)) {
 			$itemID = $item;
 		} 
@@ -96,84 +92,33 @@ class OrientManyManyList extends OrientRelationList {
 		if(!$foreignID) {
 			throw new Exception("ManyManyList::add() can't be called until a foreign ID is set", E_USER_WARNING);
 		}
-		SS_Log::log(new Exception(print_r($foreignID, true)), SS_Log::NOTICE);
-		
-
 
 		if ($itemID && $foreignID) {
 			$manipulation = array();
 
 			$tableName = $this->getParentClass();
-			SS_Log::log(new Exception(print_r($tableName, true)), SS_Log::NOTICE);
-
 			$componentName = $this->getComponentName();
-			SS_Log::log(new Exception(print_r($componentName, true)), SS_Log::NOTICE);
 
 			//Unfortunately need to use "set" command the first time
 			$hasExisting = false;
 			$parentItem = $tableName::get()
 				->filter(array('ID' => $foreignID))
 				->first();
-
-			$existingComponent = $parent->Tags()->exists();
-
-			// SS_Log::log(new Exception(print_r($parentItem, true)), SS_Log::NOTICE);
-
-			// SS_Log::log(new Exception(print_r($this->exists(), true)), SS_Log::NOTICE);
-
-			//TODO need to use "set" command the first time
+			$hasExisting = $parentItem->Tags()->exists();
 
 			//We are updating a record's LinkSet
 			$manipulation[$tableName]['command'] = 'update_container';
+			$manipulation[$tableName]['id'] = $foreignID;
 
 			//Use "set" command the first time we add entries to this list
-			$command = ($hasExisting) ? 'add' : 'set';
-			$manipulation[$tableName]['container_command'] = "$command $componentName";
-			$manipulation[$tableName]['id'] = $foreignID;
-			$manipulation[$tableName]['container_values'] = '[#' . $itemID . ']';
-
-
-			DB::manipulate($manipulation);
-		}
-
-		return;
-
-
-		//@todo need to inspect the linklist here instead
-		// if($foreignFilter) {
-		// 	$query = new SQLQuery("*", array("$this->joinTable"));
-		// 	$query->setWhere($foreignFilter);
-		// 	$hasExisting = ($query->count() > 0);
-		// } else {
-		// 	$hasExisting = false;	
-		// }
-		$hasExisting = false;
-
-		//Ignore the foreign filter, get the current class and update the linklist on it with a JSON array
-		$foreignData = json_encode((array)$foreignIDs);
-
-		SS_Log::log(new Exception(print_r($foreignData, true)), SS_Log::NOTICE);
-
-		// Insert or update
-		foreach((array)$foreignIDs as $foreignID) {
-			$manipulation = array();
-			if($hasExisting) {
-				$manipulation[$this->joinTable]['command'] = 'update';	
-				$manipulation[$this->joinTable]['where'] = "{$this->joinTable}.{$this->foreignKey} = " . 
-					"'" . Convert::raw2sql($foreignID) . "'" .
-					" AND {$this->localKey} = {$itemID}";
-			} else {
-				$manipulation[$this->joinTable]['command'] = 'insert';	
+			if ($hasExisting) {
+				$manipulation[$tableName]['container_command'] = "add $componentName";
+				$manipulation[$tableName]['container_values'] = '#' . $itemID;
 			}
-
-			//Extra fields are not supported
-			// if($extraFields) foreach($extraFields as $k => $v) {
-			// 	if(is_null($v)) $manipulation[$this->joinTable]['fields'][$k] = 'NULL';
-			// 	else $manipulation[$this->joinTable]['fields'][$k] =  "'" . Convert::raw2sql($v) . "'";
-			// }
-
-			$manipulation[$this->joinTable]['fields'][$this->localKey] = $itemID;
-			$manipulation[$this->joinTable]['fields'][$this->foreignKey] = $foreignID;
+			else {
+				$manipulation[$tableName]['container_command'] = "set $componentName";
+				$manipulation[$tableName]['container_values'] = '[#' . $itemID . ']';
+			}
 
 			DB::manipulate($manipulation);
 		}

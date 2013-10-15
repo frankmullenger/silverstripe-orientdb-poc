@@ -92,9 +92,17 @@ class OrientDataList extends DataList {
 		return $this->filter(array('ID' => $id))->first();
 	}
 
-	public function traverse($containerName, $rid) {
-		return $this->alterDataQuery(function($query) use ($containerName, $rid){
-			$query->traverse($containerName, $rid);
+	public function traverse($containerName) {
+
+		//Should this go into OrientRelationList?
+		return $this->alterDataQuery(function($query) use ($containerName){
+			$query->traverse($containerName);
+		});
+	}
+
+	public function from($from) {
+		return $this->alterDataQuery(function($query) use ($from){
+			$query->from($from);
 		});
 	}
 
@@ -104,5 +112,72 @@ class OrientDataList extends DataList {
 
 	public function leftJoin($table, $onClause, $alias = null) {
 		user_error("OrientDB does not support left joins, need to refactor to traversal.", E_USER_ERROR);
+	}
+
+	/**
+	 * Return an array of the actual items that this DataList contains at this stage.
+	 * This is when the query is actually executed.
+	 *
+	 * Some queries such as traverses return multiple types of records, only certain 
+	 * records (those matching the type of the component being traversed) should be
+	 * returned.
+	 *
+	 * @return array
+	 */
+	public function toArray() {
+		$query = $this->dataQuery->query();
+		$rows = $query->execute();
+		$results = array();
+		
+		foreach ($rows as $row) {
+			if ($obj = $this->createDataObject($row)) {
+				$results[] = $obj;
+			}
+		}
+		return $results;
+	}
+
+	/**
+	 * Create a DataObject from the given SQL row
+	 *
+	 * @todo need to improve logic for this method
+	 * 
+	 * @param array $row
+	 * @return DataObject
+	 */
+	protected function createDataObject($row) {
+		$defaultClass = $this->dataClass;
+
+		// Failover from RecordClassName to ClassName
+		if (empty($row['RecordClassName'])) {
+			$row['RecordClassName'] = $row['ClassName'];
+		}
+		
+		// Instantiate the class mentioned in RecordClassName only if it exists, otherwise default to $this->dataClass
+		if (class_exists($row['RecordClassName'])) {
+			$item = Injector::inst()->create($row['RecordClassName'], $row, false, $this->model);
+		} 
+		else {
+			$item = Injector::inst()->create($defaultClass, $row, false, $this->model);
+		}
+
+		//set query params on the DataObject to tell the lazy loading mechanism the context the object creation context
+		$item->setSourceQueryParams($this->dataQuery()->getQueryParams());
+
+
+		//If traversing only return objects of the component type
+		$query = $this->dataQuery->query();
+		if ($query->getTraverse()) {
+
+			if ($row['RecordClassName'] == $defaultClass) {
+				$item = Injector::inst()->create($defaultClass, $row, false, $this->model);
+				$item->setSourceQueryParams($this->dataQuery()->getQueryParams());
+			}
+			else {
+				$item = null;
+			}
+		}
+
+		return $item;
 	}
 }

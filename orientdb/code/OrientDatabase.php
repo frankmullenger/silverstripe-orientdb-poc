@@ -184,11 +184,16 @@ class OrientDatabase extends SS_Database {
 	 * @param $query SQLQuery
 	 */
 	public function sqlQueryToString(SQLQuery $query) {
-		if($query->getDelete()) {
+
+		if ($query->getDelete()) {
 			//Appended space at the end of string causing an issue but this might not be the best solution
 			//@see sqlSelectToString() sqlFromToString
 			$text = 'DELETE';
 		} 
+		else if ($traverse = $query->getTraverse()) {
+			//Build the traverse string here
+			$text = $this->sqlTraverseToString($traverse);
+		}
 		else {
 			$text = $this->sqlSelectToString($query->getSelect(), $query->getDistinct());
 		}
@@ -203,6 +208,16 @@ class OrientDatabase extends SS_Database {
 			if($query->getOrderBy()) $text .= $this->sqlOrderByToString($query->getOrderBy());
 			if($query->getLimit()) $text .= $this->sqlLimitToString($query->getLimit());
 		}
+
+		// SS_Log::log(new Exception(print_r($text, true)), SS_Log::NOTICE);
+
+		return $text;
+	}
+
+	public function sqlTraverseToString($traverse) {
+
+		$component = array_pop($traverse);
+		$text = "TRAVERSE $component";
 		return $text;
 	}
 

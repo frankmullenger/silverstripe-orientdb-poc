@@ -138,7 +138,7 @@ class OrientDataQuery extends DataQuery {
 			}
 		}
 
-
+		//Filter results for only a certain class
 		if($this->filterByClassName) {
 
 			// If querying the base class, don't bother filtering on class name
@@ -207,8 +207,15 @@ class OrientDataQuery extends DataQuery {
 		return $this->getFinalisedQuery()->count('*');
 	}
 
-	public function traverse($containerName, $rid) {
-		$this->query->traverse($containerName, $rid);
+	public function traverse($containerName) {
+
+		$this->query->setTraverse($containerName);
+		return $this;
+	}
+
+	public function from($from) {
+
+		$this->query->setFrom($from);
 		return $this;
 	}
 }

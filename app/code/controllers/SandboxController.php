@@ -132,45 +132,40 @@ class SandboxController extends AppController {
 
 	public function manymany() {
 
+		//Get a many_many component that already exists
+		// $article = Article::get()
+		// 	->filter(array('ID' => '27:0'))
+		// 	->first();
+		// SS_Log::log(new Exception(print_r($article->toMap(), true)), SS_Log::NOTICE);
+
+		// $tags = $article->Tags();
+		// foreach ($tags as $tag) {
+		// 	SS_Log::log(new Exception(print_r($tag, true)), SS_Log::NOTICE);
+		// }
+
+
 		//Create a post and relate it to an author
-		$i = rand(1,999);
+		$i = rand(1, 999);
 
 		$article = new Article();
 		$article->Name = "Article $i";
 		$id = $article->write();
 
-		// // $post = new Post();
-		// // $post->Title = "Post Title $i";
-		// // $post->AuthorID = $id;
-		// // $post->write();
+		$range = range(10, 30, rand(1,10));
+		SS_Log::log(new Exception(print_r($range, true)), SS_Log::NOTICE);
 
-		// $post = Post::get()->first();
-		// SS_Log::log(new Exception(print_r($post->toMap(), true)), SS_Log::NOTICE);
+		foreach ($range as $val) {
+			$tag = new Tag();
+			$tag->Name = "Tag $val";
+			$tag->write();
 
-		// $author = $post->Author();
-		// SS_Log::log(new Exception(print_r($author->toMap(), true)), SS_Log::NOTICE);
+			$article->Tags()->add($tag);
+		}
 
-		// $posts = $author->Posts();
-		// SS_Log::log(new Exception(print_r($posts->map()->toArray(), true)), SS_Log::NOTICE);
-
-		$tags = $article->Tags();
-		SS_Log::log(new Exception(print_r($tags->sql(), true)), SS_Log::NOTICE);
-
-		// $range = range(10, 30, rand(1,10));
-		// SS_Log::log(new Exception(print_r($range, true)), SS_Log::NOTICE);
-
-		// foreach ($range as $val) {
-		// 	$tag = new Tag();
-		// 	$tag->Name = "Tag $val";
-		// 	$tag->write();
-
-		// 	$article->Tags()->add($tag);
-		// }
-
-		// $admin = Member::create();
-		// $admin->FirstName = _t('Member.DefaultAdminFirstname', 'Default Admin');
-		// $admin->write();
-		// $admin->Groups()->add($adminGroup);
+		foreach ($article->Tags() as $tag) {
+			SS_Log::log(new Exception(print_r($tag->toMap(), true)), SS_Log::NOTICE);
+		}
+		SS_Log::log(new Exception(print_r($article->Tags()->count(), true)), SS_Log::NOTICE);
 
 		return $this->customise(new ArrayData(array(
 			'Title' => 'Orient DB Sandbox Many_Many'

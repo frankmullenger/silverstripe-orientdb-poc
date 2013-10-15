@@ -14,18 +14,33 @@ class OrientSQLQuery extends SQLQuery {
 	 */
 	public function count($column = null) {
 
+		//@todo should we have column set to * always?
 		// Choose a default column
 		if($column == null) {
 			$column = '*';
 		}
 
 		$clone = clone $this;
-		$clone->select = array("count($column)");
+
+		//Hack for traverses as a kind of subquery
+		$traversing = $clone->getTraverse();
+		if ($traversing) {
+			$clone->setFrom('(' . $clone->sql() . ')');
+			$clone->traverse = array();
+		}
+
+		$clone->select = array('count' => "count($column)");
 		$clone->limit = null;
 		$clone->orderby = null;
 		$clone->groupby = null;
 
 		$count = $clone->execute()->value();
+
+		//Another hack for traversing, the record itself is returned in the results
+		if ($traversing) {
+			$count--;
+		}
+
 		return $count;
 	}
 
@@ -206,8 +221,12 @@ class OrientSQLQuery extends SQLQuery {
 		return $orderBy;
 	}
 
-	public function traverse() {
-		//TODO set up the query to traverse
+	public function setTraverse($containerName) {
+		$this->traverse = array($containerName);
+	}
+
+	public function getTraverse() {
+		return $this->traverse;
 	}
 
 	/**
@@ -219,23 +238,25 @@ class OrientSQLQuery extends SQLQuery {
 		// TODO: Don't require this internal-state manipulate-and-preserve - let sqlQueryToString() handle the new
 		// syntax
 		$origFrom = $this->from;
-		// Sort the joins
-		$this->from = $this->getOrderedJoins($this->from);
-		// Build from clauses
-		foreach($this->from as $alias => $join) {
-			// $join can be something like this array structure
-			// array('type' => 'inner', 'table' => 'SiteTree', 'filter' => array("SiteTree.ID = 1", 
-			// "Status = 'approved'", 'order' => 20))
-			if(is_array($join)) {
-				if(is_string($join['filter'])) $filter = $join['filter'];
-				else if(sizeof($join['filter']) == 1) $filter = $join['filter'][0];
-				else $filter = "(" . implode(") AND (", $join['filter']) . ")";
 
-				$aliasClause = ($alias != $join['table']) ? " AS \"" . Convert::raw2sql($alias) . "\"" : "";
-				$this->from[$alias] = strtoupper($join['type']) . " JOIN \"" 
-					. $join['table'] . "\"$aliasClause ON $filter";
-			}
-		}
+		// Sort the joins
+		// $this->from = $this->getOrderedJoins($this->from);
+		
+		// Build from clauses
+		// foreach($this->from as $alias => $join) {
+		// 	// $join can be something like this array structure
+		// 	// array('type' => 'inner', 'table' => 'SiteTree', 'filter' => array("SiteTree.ID = 1", 
+		// 	// "Status = 'approved'", 'order' => 20))
+		// 	if(is_array($join)) {
+		// 		if(is_string($join['filter'])) $filter = $join['filter'];
+		// 		else if(sizeof($join['filter']) == 1) $filter = $join['filter'][0];
+		// 		else $filter = "(" . implode(") AND (", $join['filter']) . ")";
+
+		// 		$aliasClause = ($alias != $join['table']) ? " AS \"" . Convert::raw2sql($alias) . "\"" : "";
+		// 		$this->from[$alias] = strtoupper($join['type']) . " JOIN \"" 
+		// 			. $join['table'] . "\"$aliasClause ON $filter";
+		// 	}
+		// }
 
 		$sql = DB::getConn()->sqlQueryToString($this);
 		

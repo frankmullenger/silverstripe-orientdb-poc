@@ -244,7 +244,7 @@ load record #5:0 = load a record for inspecting it
 create property Article.Tig linkset Tag = create linkset for may_many from Article to Tags  
 insert into #27:0 (Tig) values ([#29:0,#29:2]) = insert some tags to the relation on article  
 update #27:0 set Tags = [#28:0] = update the tags relation  
-update #27:0 add Tags = [#28:2] = add to the tags relation  
+update #27:0 add Tags = #28:2 = add to the tags relation  
 update #27:0 remove Tags = #28:2 = remove tags  
 traverse Tags from #27:0 = query for the relation
 
