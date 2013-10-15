@@ -166,6 +166,14 @@ class SandboxController extends AppController {
 		}
 		SS_Log::log(new Exception(print_r($article->Tags()->count(), true)), SS_Log::NOTICE);
 
+		$firstTag = $article->Tags()->first();
+		SS_Log::log(new Exception(print_r($tag->toMap(), true)), SS_Log::NOTICE);
+
+
+		foreach ($tag->Articles() as $article) {
+			SS_Log::log(new Exception(print_r($article->toMap(), true)), SS_Log::NOTICE);
+		}
+
 		return $this->customise(new ArrayData(array(
 			'Title' => 'Orient DB Sandbox Many_Many'
 		)))->renderWith(array(

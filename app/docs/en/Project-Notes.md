@@ -75,7 +75,12 @@ Currently the PHP connector module only supports the graph database, this does n
 #### Cannot have many_many extra fields
 Many_many relations are not represented with a join table but with containers on each class such as LinkSet. 
 
+#### Clusters are not used/supported at this time
 
+#### Graph entities such as vertices are not supported
+
+#### Where, sort and limit filters on getManyManyComponents
+Cannot filter the traverse command particularly easily
 
 
 

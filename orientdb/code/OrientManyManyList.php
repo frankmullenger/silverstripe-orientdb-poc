@@ -1,7 +1,9 @@
 <?php
 
 /**
- * Subclass of {@link DataList} representing a many_many relation.
+ * Subclass of {@link DataList} representing a many_many relation in OrientDB.
+ * This class was created to mimic the existing funtionality of ManyManyList but the approach 
+ * could probably be improved for OrientDB case.
  *
  * @package framework
  * @subpackage model
@@ -69,13 +71,12 @@ class OrientManyManyList extends OrientRelationList {
 	}
 
 	/**
-	 * Add an item to this many_many relationship
-	 * Does so by adding an entry to the joinTable.
-	 * @param $extraFields A map of additional columns to insert into the joinTable
+	 * Add an item to this many_many relationship.
+	 * Does so by adding an entry to the LinkSets on both parent objects.
+	 * 
+	 * @param $extraFields NOTE: Does not support extra fields
 	 */
 	public function add($item, $extraFields = null) {
-
-		//Note: extra fields are not supported
 
 		if (is_numeric($item)) {
 			$itemID = $item;
@@ -93,6 +94,7 @@ class OrientManyManyList extends OrientRelationList {
 			throw new Exception("ManyManyList::add() can't be called until a foreign ID is set", E_USER_WARNING);
 		}
 
+		//@todo do we need to wrap these two dependent DB manipulations in a transaction?
 		if ($itemID && $foreignID) {
 			$manipulation = array();
 
@@ -104,7 +106,7 @@ class OrientManyManyList extends OrientRelationList {
 			$parentItem = $tableName::get()
 				->filter(array('ID' => $foreignID))
 				->first();
-			$hasExisting = $parentItem->Tags()->exists();
+			$hasExisting = $parentItem->$componentName()->exists();
 
 			//We are updating a record's LinkSet
 			$manipulation[$tableName]['command'] = 'update_container';
@@ -118,6 +120,42 @@ class OrientManyManyList extends OrientRelationList {
 			else {
 				$manipulation[$tableName]['container_command'] = "set $componentName";
 				$manipulation[$tableName]['container_values'] = '[#' . $itemID . ']';
+			}
+
+			DB::manipulate($manipulation);
+
+
+			//Get corresponding relation on the other object to update
+			$belongsTableName = $this->dataClass;
+			$belongsComponentName = null;
+
+			//@todo probably cleaner way to do this
+			$belongsManyMany = Config::inst()->get($this->dataClass, 'belongs_many_many', Config::UNINHERITED);
+			if (is_array($belongsManyMany)) foreach ($belongsManyMany as $componentName => $class) {
+				if ($class == $tableName) {
+					$belongsComponentName = $componentName;
+					break;
+				}
+			}
+
+			$hasExisting = false;
+			$parentItem = $belongsTableName::get()
+				->filter(array('ID' => $itemID))
+				->first();
+			$hasExisting = $parentItem->$belongsComponentName()->exists();
+
+			//We are updating a record's LinkSet
+			$manipulation[$belongsTableName]['command'] = 'update_container';
+			$manipulation[$belongsTableName]['id'] = $itemID;
+
+			//Use "set" command the first time we add entries to this list
+			if ($hasExisting) {
+				$manipulation[$belongsTableName]['container_command'] = "add $belongsComponentName";
+				$manipulation[$belongsTableName]['container_values'] = '#' . $foreignID;
+			}
+			else {
+				$manipulation[$belongsTableName]['container_command'] = "set $belongsComponentName";
+				$manipulation[$belongsTableName]['container_values'] = '[#' . $foreignID . ']';
 			}
 
 			DB::manipulate($manipulation);
@@ -143,48 +181,54 @@ class OrientManyManyList extends OrientRelationList {
 	 * @param $itemID The item it
 	 */
 	public function removeByID($itemID) {
-		if(!is_numeric($itemID)) throw new InvalidArgumentException("ManyManyList::removeById() expecting an ID");
 
-		$query = new SQLQuery("*", array("$this->joinTable"));
-		$query->setDelete(true);
+		user_error('Not yet implemented: ' . __METHOD__, E_USER_ERROR);
 
-		if($filter = $this->foreignIDWriteFilter($this->getForeignID())) {
-			$query->setWhere($filter);
-		} else {
-			user_error("Can't call ManyManyList::remove() until a foreign ID is set", E_USER_WARNING);
-		}
+		// if(!is_numeric($itemID)) throw new InvalidArgumentException("ManyManyList::removeById() expecting an ID");
+
+		// $query = new SQLQuery("*", array("$this->joinTable"));
+		// $query->setDelete(true);
+
+		// if($filter = $this->foreignIDWriteFilter($this->getForeignID())) {
+		// 	$query->setWhere($filter);
+		// } else {
+		// 	user_error("Can't call ManyManyList::remove() until a foreign ID is set", E_USER_WARNING);
+		// }
 		
-		$query->addWhere("$this->localKey = {$itemID}");
-		$query->execute();
+		// $query->addWhere("$this->localKey = {$itemID}");
+		// $query->execute();
 	}
 
 	/**
 	 * Remove all items from this many-many join.  To remove a subset of items, filter it first.
 	 */
 	public function removeAll() {
-		$base = ClassInfo::baseDataClass($this->dataClass());
 
-		// Remove the join to the join table to avoid MySQL row locking issues.
-		$query = $this->dataQuery();
-		$query->removeFilterOn($query->getQueryParam('Foreign.Filter'));
+		user_error('Not yet implemented: ' . __METHOD__, E_USER_ERROR);
+		
+		// $base = ClassInfo::baseDataClass($this->dataClass());
 
-		$query = $query->query();
-		$query->setSelect("{$base}.ID");
+		// // Remove the join to the join table to avoid MySQL row locking issues.
+		// $query = $this->dataQuery();
+		// $query->removeFilterOn($query->getQueryParam('Foreign.Filter'));
 
-		$from = $query->getFrom();
-		unset($from[$this->joinTable]);
-		$query->setFrom($from);
-		$query->setDistinct(false);
-		$query->setOrderBy(null, null); // ensure any default sorting is removed, ORDER BY can break DELETE clauses
+		// $query = $query->query();
+		// $query->setSelect("{$base}.ID");
 
-		// Use a sub-query as SQLite does not support setting delete targets in
-		// joined queries.
-		$delete = new SQLQuery();
-		$delete->setDelete(true);
-		$delete->setFrom("$this->joinTable");
-		$delete->addWhere($this->foreignIDFilter());
-		$delete->addWhere("{$this->joinTable}.{$this->localKey} IN ({$query->sql()})");
-		$delete->execute();
+		// $from = $query->getFrom();
+		// unset($from[$this->joinTable]);
+		// $query->setFrom($from);
+		// $query->setDistinct(false);
+		// $query->setOrderBy(null, null); // ensure any default sorting is removed, ORDER BY can break DELETE clauses
+
+		// // Use a sub-query as SQLite does not support setting delete targets in
+		// // joined queries.
+		// $delete = new SQLQuery();
+		// $delete->setDelete(true);
+		// $delete->setFrom("$this->joinTable");
+		// $delete->addWhere($this->foreignIDFilter());
+		// $delete->addWhere("{$this->joinTable}.{$this->localKey} IN ({$query->sql()})");
+		// $delete->execute();
 	}
 
 	/**
