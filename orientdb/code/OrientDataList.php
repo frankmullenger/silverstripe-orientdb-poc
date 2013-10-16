@@ -20,7 +20,13 @@ class OrientDataList extends DataList {
 	 */
 	public function addFilter($filterArray) {
 
-		//This needs to exist in this class probably because we are using Object::use_custom_class()
+		//@todo Set the from to be an RID for better performance
+		// if (isset($filterArray['ID'])) {
+		// 	$rid = '#' . $filterArray['ID'];
+		// 	$query = $this->dataQuery()->query();
+		// 	$query->setFrom($rid);
+		// 	unset($filterArray['ID']);
+		// }
 
 		$list = $this;
 

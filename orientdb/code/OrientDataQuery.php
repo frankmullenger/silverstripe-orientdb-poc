@@ -65,47 +65,40 @@ class OrientDataQuery extends DataQuery {
 		if($queriedColumns) {
 			$tableClasses = ClassInfo::dataClassesFor($this->dataClass);
 
-			foreach ($query->getWhere() as $where) {
-				// Check for just the column, in the form '"Column" = ?' and the form '"Table"."Column"' = ?
-				if (preg_match('/^"([^"]+)"/', $where, $matches) ||
-					preg_match('/^"([^"]+)"\."[^"]+"/', $where, $matches)) {
-					if (!in_array($matches[1], $queriedColumns)) $queriedColumns[] = $matches[1];
-				}
-			}
+			// foreach ($query->getWhere() as $where) {
+			// 	// Check for just the column, in the form '"Column" = ?' and the form '"Table"."Column"' = ?
+			// 	if (preg_match('/^"([^"]+)"/', $where, $matches) ||
+			// 		preg_match('/^"([^"]+)"\."[^"]+"/', $where, $matches)) {
+			// 		if (!in_array($matches[1], $queriedColumns)) $queriedColumns[] = $matches[1];
+			// 	}
+			// }
 		}
 		else {
 			$tableClasses = ClassInfo::ancestry($this->dataClass, true);
 		}
 
-		$tableNames = array_keys($tableClasses);
-		
 		//Base class is not an ancestor in OrientDB
+		$tableNames = array_keys($tableClasses);
 		$baseClass = array_pop($tableNames);
 
-		// SS_Log::log(new Exception(print_r($queriedColumns, true)), SS_Log::NOTICE);
-		// SS_Log::log(new Exception(print_r($tableNames, true)), SS_Log::NOTICE);
-		// SS_Log::log(new Exception(print_r($baseClass, true)), SS_Log::NOTICE);
-		// SS_Log::log(new Exception(print_r($this->collidingFields, true)), SS_Log::NOTICE);
-		// SS_Log::log(new Exception(print_r($query->sql(), true)), SS_Log::NOTICE);
-
 		// Resolve colliding fields
-		if($this->collidingFields) {
-			foreach($this->collidingFields as $k => $collisions) {
-				$caseClauses = array();
-				foreach($collisions as $collision) {
-					if(preg_match('/^"([^"]+)"/', $collision, $matches)) {
-						$collisionBase = $matches[1];
-						$collisionClasses = ClassInfo::subclassesFor($collisionBase);
-						$collisionClasses = array_map(array(DB::getConn(), 'prepStringForDB'), $collisionClasses);
-						$caseClauses[] = "WHEN $baseClass.ClassName IN ["
-							. implode(", ", $collisionClasses) . "] THEN $collision";
-					} else {
-						user_error("Bad collision item '$collision'", E_USER_WARNING);
-					}
-				}
-				$query->selectField("CASE " . implode( " ", $caseClauses) . " ELSE NULL END", $k);
-			}
-		}
+		// if($this->collidingFields) {
+		// 	foreach($this->collidingFields as $k => $collisions) {
+		// 		$caseClauses = array();
+		// 		foreach($collisions as $collision) {
+		// 			if(preg_match('/^"([^"]+)"/', $collision, $matches)) {
+		// 				$collisionBase = $matches[1];
+		// 				$collisionClasses = ClassInfo::subclassesFor($collisionBase);
+		// 				$collisionClasses = array_map(array(DB::getConn(), 'prepStringForDB'), $collisionClasses);
+		// 				$caseClauses[] = "WHEN $baseClass.ClassName IN ["
+		// 					. implode(", ", $collisionClasses) . "] THEN $collision";
+		// 			} else {
+		// 				user_error("Bad collision item '$collision'", E_USER_WARNING);
+		// 			}
+		// 		}
+		// 		$query->selectField("CASE " . implode( " ", $caseClauses) . " ELSE NULL END", $k);
+		// 	}
+		// }
 
 		//Filter results for only a certain class
 		if($this->filterByClassName) {
@@ -126,9 +119,6 @@ class OrientDataQuery extends DataQuery {
 		
 		//@todo remove hack to force getting all properties all the time
 		$query->setSelect("*");
-
-		// TODO: Versioned, Translatable, SiteTreeSubsites, etc, could probably be better implemented as subclasses
-		// of DataQuery
 
 		$obj = Injector::inst()->get($this->dataClass);
 		$obj->extend('augmentSQL', $query, $this);

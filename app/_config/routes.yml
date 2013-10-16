@@ -8,3 +8,4 @@ Director:
     '' : 'HomeController'
     'orient' : 'OrientController'
     'sandbox' : 'SandboxController'
+    'performance' : 'PerformanceController'

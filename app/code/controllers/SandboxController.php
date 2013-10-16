@@ -108,7 +108,11 @@ class SandboxController extends AppController {
 		$post->Title = "Post Title $i";
 		$post->write();
 
-		$post = Post::get()->first();
+		$post = Post::get()
+			->filter(array('ID' => $post->ID))
+			->first();
+
+		SS_Log::log(new Exception(print_r($post->toMap(), true)), SS_Log::NOTICE);
 
 		return $this->customise(new ArrayData(array(
 			'Title' => 'Orient DB Sandbox get one'

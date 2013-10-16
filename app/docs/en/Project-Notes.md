@@ -82,5 +82,10 @@ Many_many relations are not represented with a join table but with containers on
 #### Where, sort and limit filters on getManyManyComponents
 Cannot filter the traverse command particularly easily
 
+#### Only select * is currently supported effectively
+Cannot select multiple different fields or select DISTINCT currently
+
+
+
 
 

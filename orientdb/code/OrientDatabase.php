@@ -162,18 +162,6 @@ class OrientDatabase extends SS_Database {
 
 		DB::$lastQuery = $handle;
 
-		// SS_Log::log(new Exception(print_r($sql, true)), SS_Log::NOTICE);
-		// SS_Log::log(new Exception(print_r($handle, true)), SS_Log::NOTICE);
-		// $test = new OrientQuery($this, $handle);
-		// SS_Log::log(new Exception(print_r($test->numRecords(), true)), SS_Log::NOTICE);
-		// SS_Log::log(new Exception(print_r($test->nextRecord(), true)), SS_Log::NOTICE);
-		// SS_Log::log(new Exception(print_r($test->value(), true)), SS_Log::NOTICE);
-
-		// if(!$handle) {
-		// 	$this->databaseError("Couldn't run query: $sql", $errorLevel);
-		// 	// $this->databaseError("Couldn't run query: $sql | " . $this->dbConn->lastErrorMsg(), $errorLevel);
-		// }
-
 		return new OrientQuery($this, $handle);
 	}
 
