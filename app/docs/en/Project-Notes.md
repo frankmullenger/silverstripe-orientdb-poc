@@ -66,9 +66,6 @@ It is not sufficient to use Object::use\_custom\_class('DataList', 'OrientDataLi
 #### Search filters
 Numerous search filters need to be overridden, currently only ExactMatchFilter has been completed.
 
-#### Lack of support for vertices
-Currently the PHP connector module only supports the graph database, this does not restrict the CMS but is a limitation of the system currently. 
-
 
 ## Limitations
 
@@ -84,6 +81,24 @@ Cannot filter the traverse command particularly easily
 
 #### Only select * is currently supported effectively
 Cannot select multiple different fields or select DISTINCT currently
+
+
+## TODOS
+
+### ManyManyList
+remove() removeByID() removeAll()
+
+### getComponent() getComponents()
+DataObject getters for has\_one, has\_many, belongs\_to altered to use Link and LinkSet
+
+### Search filters
+SearchFilter classes need to be upgraded for ModelAdmin to work
+
+### Versioned architecture
+Some sort of solution for versioned
+
+
+
 
 
 

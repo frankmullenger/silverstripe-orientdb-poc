@@ -18,6 +18,7 @@ switch ($_SERVER['HTTP_HOST']) {
 		Object::useCustomClass('DataList', 'OrientDataList');
 		Object::useCustomClass('RelationList', 'OrientRelationList');
 		Object::useCustomClass('HasManyList', 'OrientHasManyList');
+		Object::useCustomClass('ManyManyList', 'OrientManyManyList');
 		Object::useCustomClass('ForeignKey', 'OrientForeignKey');
 
 		//Hide security admin for now
