@@ -20,6 +20,7 @@ class Person extends DataObject {
 			GridFieldConfig_RecordEditor::create()
 				->removeComponentsByType('GridFieldEditButton')
 				->removeComponentsByType('GridFieldDeleteAction')
+				->removeComponentsByType('GridFieldAddNewButton')
 		));
 
 		return $fields;

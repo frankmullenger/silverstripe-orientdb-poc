@@ -212,7 +212,7 @@ class PerformanceController extends AppController {
 			$rand = rand(1, 999);
 
 			$article = new Article();
-			$article->Name = "Article $rand";
+			$article->Title = "Article $rand";
 			$id = $article->write();
 
 			$range = array(1,2);
