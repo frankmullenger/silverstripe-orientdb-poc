@@ -1,6 +1,6 @@
-# Database Connectors
+# Pipelines
 
-## Pipeline
+## Getting a DataObject
 
 ### DataObject::get()
 
@@ -119,4 +119,10 @@ The SS_Query object implements Iterator, in both cases the query results are ret
 	$data = $this->handle->fetch_assoc()
 ```
 
+## Getting a component
 
+_TODO_
+
+## Building the database
+
+_TODO_

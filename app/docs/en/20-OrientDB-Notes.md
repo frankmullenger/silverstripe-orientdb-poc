@@ -56,12 +56,13 @@ Can alter properties using ALTER PROPERTY ... need to alter one at a time.
 
 #### Inheritance
 
-```SQL
+```
 create class Child extends Parent
 ```
 
 * Child classes will have structure updated when Parent structure updates
 * Selecting from parent includes children also
+* This can result in a bit of duplicate data i.e: entries in the parent and child class for the same record
 
 ### Abstract Classes
 
@@ -77,6 +78,8 @@ Server users are in the XML config file, they are special users and have access 
 
 Database users are entered in the OUsers table and need roles created for them to give them permissions on particular databases.
 
+__Note:__ Important not to clear the Ouser and OIdentity tables as they are used to manage database users.
+
 __Note:__ Best to leave the users in the XML config file as they are used by OrientDB.
 
 OrientDB has record level security that can be used to restrict access to records - could map to SilverStripe Members and roles perhaps.
@@ -85,8 +88,8 @@ __Note:__ User passwords are hashed with SHA-256 by default, SilverStripe uses B
 
 ### Relation Management
 
-https://github.com/orientechnologies/orientdb/wiki/Tutorial%3A-Relationships  
-https://github.com/orientechnologies/orientdb/wiki/SQL-Create-Link
+[Relation tutorial](https://github.com/orientechnologies/orientdb/wiki/Tutorial%3A-Relationships)  
+[Creating Links](https://github.com/orientechnologies/orientdb/wiki/SQL-Create-Link)
 
 #### Embedded documents
 
@@ -145,7 +148,7 @@ The RIDs are not simply logical identifiers, they are physical pointers to a fil
 When you execute a SELECT query providing a projection the returned records aren't the ones stored on files bt they are _virtual records_ bult at the runtime and have no physical pointers. In these cases OrientDB returns negative RIDs.
 
 To obtain the record RIDs in these queries use special @rid property:  
-SELECT @rid as RealRid, title FROM Posts
+_SELECT @rid as RealRid, title FROM Posts_
 
 ### Special properties
 
@@ -158,7 +161,7 @@ SELECT @rid as RealRid, title FROM Posts
 
 ## Commands
 
-https://github.com/orientechnologies/orientdb/wiki
+[Commands docs](https://github.com/orientechnologies/orientdb/wiki)
 
 ### Scripts and configuration
 
@@ -175,9 +178,9 @@ Can browser to localhost:2480 after server started for web interface.
 
 ### Connect to server and databases
 
-connect remote:localhost root <some pasword> = connect to remote server  
-connect remote:localhost/demo admin admin = connect to remote database  
-connect plocal:../databases/demo admin admin = connect to local database
+connect remote:localhost root <some pasword> = connect to server  
+connect remote:localhost/demo admin admin = connect to database  
+connect plocal:../databases/demo admin admin = alternative way to connect to database
 
 ### Create databases
 
