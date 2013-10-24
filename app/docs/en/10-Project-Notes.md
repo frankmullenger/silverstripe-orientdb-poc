@@ -107,7 +107,8 @@ SearchFilter classes need to be upgraded for ModelAdmin to work
 #### Versioned architecture
 Some sort of solution for versioned
 
-
+#### Pagination support
+Pagination does not currently work, needs a [new query structure](https://github.com/orientechnologies/orientdb/wiki/Pagination).
 
 
 
