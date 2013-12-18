@@ -1,42 +1,5 @@
 # Project Notes
 
-## Goals
-
-1. SilverStripe works with OrientDB, one of the only CMS's to work with OrientDB.
-2. See if OrientDB is going to be a good backend for SilverStripe.
-
-## Initial notes from meeting
-
-Want to strip out everything and keep it very simple, aim for a basic DataObject as a demo.  
-No relations.  
-Basic CRUD working.
-
-Eventually want OrientDB to extend DB, have a look at MySQLDB, PostgresDB and SQLiteDB.
-
-Would not be a bad idea to remove many many and replace with has many through.
-
-Regex to add quotes to the manipulation.
-
-Perhaps want to record the current schema of the DB in the database itself or some kind of cache.
-
-/dev/build will no do much, might create the classes/tables: Create class Student (was Create table Student)
-
-How to handle subclasses, currently subclasses have a seperate table.
-
-Documents without a ClassName field should just be ignored.
-
-DataMapper rather than ActiveRecord.
-
-SearchFilter has a bunch of join logic that can probably be commented out.
-
-Approach:  
-silverstripe-orientdb module  
-composer dependency of https://github.com/AntonTerekhov/OrientDB-PHP  
-Fork framework  
-Start with framework only and no CMS
-
-Can RID  xx:xx go into the numeric ID field? - this would be ideal
-
 ## Issues
 
 ### SQL Queries
